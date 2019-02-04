@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import RootForm from "../form/RootForm";
 import Vdo from "./VdoChat";
+import Upload from "../form/UploadForm";
 import "../css/Chatbox.css";
 import {
   List,
@@ -44,9 +45,7 @@ class ChatBox extends Component {
       <div className="full-screen">
         <section className="chat-screen">
           <section className="optional">
-            <div className="btn">
-              <i className="fa fa-upload" />
-            </div>
+            <Upload className="btn" />
             <div className="btn">
               <i className="fa fa-download" />
             </div>

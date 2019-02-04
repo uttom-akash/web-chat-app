@@ -2,10 +2,14 @@ import React, { Component } from "react";
 import { Form, Input } from "reactstrap";
 import "../css/RootForm.css";
 class RootForm extends Component {
-  state = {
-    filePicker: null,
-    message: ""
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      filePicker: null,
+      message: ""
+    };
+    this.defaultSize = 20 * 1024 * 1024;
+  }
 
   //File Handling
   onFileChange = ev => this.setState({ filePicker: ev.target.files[0] });
@@ -47,7 +51,10 @@ class RootForm extends Component {
     ev.preventDefault();
     const { filePicker, message } = this.state;
     if (filePicker) {
-      this.onFileSend(filePicker);
+      if (filePicker.size <= this.defaultSize) this.onFileSend(filePicker);
+      else {
+        alert("file is larger than 20mb..please upload large file");
+      }
     } else {
       this.props.onSend({
         fileName: "",
