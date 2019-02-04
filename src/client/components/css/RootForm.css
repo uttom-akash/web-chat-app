@@ -8,7 +8,7 @@
 .msg-compose textarea {
   flex-grow: 2;
   margin: 0 1rem;
-  border: 1px solid rgb(95, 6, 179);
+  border: 1px solid #00bfff;
   background-color: rgb(25, 25, 26);
   color: rgb(189, 189, 196);
   border-radius: 20px;
@@ -22,6 +22,6 @@
 
 .msg-compose i {
   font-size: 2rem;
-  color: rgb(95, 6, 179);
+  color: #00bfff;
   cursor: pointer;
 }

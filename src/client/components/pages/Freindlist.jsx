@@ -17,7 +17,7 @@ class FriendList extends Component {
           </header>
           <ul>
             <li>
-              <button className="list">
+              <div className="list" onClick={this.props.onToggler}>
                 <div className="avatar">
                   <img
                     className="active"
@@ -32,10 +32,10 @@ class FriendList extends Component {
 
                   <code className="timestamp">8 :32</code>
                 </div>
-              </button>
+              </div>
             </li>
             <li>
-              <button className="list">
+              <div className="list" onClick={this.props.onToggler}>
                 <div className="avatar">
                   <img
                     className="inactive"
@@ -49,7 +49,7 @@ class FriendList extends Component {
                   <p className="text">how are You ...............</p>
                   <code className="timestamp">8 :00</code>
                 </div>
-              </button>
+              </div>
             </li>
           </ul>
         </section>

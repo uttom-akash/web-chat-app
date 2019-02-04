@@ -1,8 +1,6 @@
 import React, { Component } from "react";
-import { Card, Form, Button, Input } from "reactstrap";
-import axios from "axios";
-//import "../css/RootForm.css";
-
+import { Form, Input } from "reactstrap";
+import "../css/RootForm.css";
 class RootForm extends Component {
   state = {
     filePicker: null,
@@ -17,35 +15,34 @@ class RootForm extends Component {
   onMessageChange = ev => this.setState({ [ev.target.name]: ev.target.value });
 
   // onFileSend = filePicker => {
-  //   const reader = new FileReader();
-  //   reader.readAsDataURL(filePicker);
-  //   reader.onload = ev => {
-  //     this.props.onSend({
-  //       fileName: filePicker.name,
-  //       type: filePicker.type,
-  //       file: reader.result,
-  //       size: filePicker.size,
-  //       messageType: true,
-  //       message: ""
-  //     });
-  //   };
+  //   const fd = new FormData();
+  //   fd.append("file", filePicker);
+  //   //axios.post("/api/file", fd);
+
+  //   this.props.onSend({
+  //     fileName: filePicker.name,
+  //     type: filePicker.type,
+  //     file: window.URL.createObjectURL(filePicker),
+  //     size: filePicker.size,
+  //     messageType: true,
+  //     message: ""
+  //   });
   // };
 
   onFileSend = filePicker => {
-    const fd = new FormData();
-    fd.append("file", filePicker);
-    //axios.post("/api/file", fd);
-
-    this.props.onSend({
-      fileName: filePicker.name,
-      type: filePicker.type,
-      file: window.URL.createObjectURL(filePicker),
-      size: filePicker.size,
-      messageType: true,
-      message: ""
-    });
+    let reader = new FileReader();
+    reader.onload = e => {
+      this.props.onSend({
+        fileName: filePicker.name,
+        type: filePicker.type,
+        file: reader.result,
+        size: filePicker.size,
+        messageType: true,
+        message: ""
+      });
+    };
+    reader.readAsDataURL(filePicker);
   };
-
   onSubmit = ev => {
     ev.preventDefault();
     const { filePicker, message } = this.state;
@@ -81,7 +78,7 @@ class RootForm extends Component {
               zIndex: "-1"
             }}
           />
-          <label for="file">
+          <label htmlFor="file">
             <i className="fas fa-paperclip" />
           </label>
           <textarea

@@ -39,12 +39,19 @@ class ChatBox extends Component {
   };
 
   render() {
-    const { messages, sender, receiver, onSend } = this.props;
+    const { messages, sender, receiver, onSend, onToggler } = this.props;
     return (
       <div className="full-screen">
         <section className="chat-screen">
           <section className="optional">
-            <button onClick={this.onClick} className="btn">
+            <div className="btn">
+              <i className="fa fa-upload" />
+            </div>
+            <div className="btn">
+              <i className="fa fa-download" />
+            </div>
+
+            <button onClick={onToggler} className="btn">
               <i className="fas fa-arrow-left" />
             </button>
             <Vdo
@@ -62,6 +69,7 @@ class ChatBox extends Component {
               btn="fa fa-video-camera"
             />
           </section>
+
           <section className="messages">
             <AutoSizer>
               {({ height, width }) => (
@@ -74,7 +82,6 @@ class ChatBox extends Component {
                   rowRenderer={this.rowRenderer}
                   width={width}
                   overscanRowCount={5}
-                  //scrollToRow={messages.length}
                 />
               )}
             </AutoSizer>

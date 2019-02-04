@@ -13,11 +13,14 @@ class Layout extends Component {
     this.state = {
       messages: [],
       receiver: "",
-      sender: ""
+      sender: "",
+      toggler: true
     };
 
     this.listRef = React.createRef();
   }
+
+  onToggler = () => this.setState({ toggler: !this.state.toggler });
 
   //initialize
   initSocket = (receiver, sender) => {
@@ -72,17 +75,22 @@ class Layout extends Component {
   //render
   render() {
     //component
-    const { sender, receiver, messages } = this.state;
+    const { toggler, sender, receiver, messages } = this.state;
     console.log(messages);
 
     return (
       <div>
-        <ChatBox
-          sender={sender}
-          receiver={receiver}
-          messages={messages}
-          onSend={this.onSend}
-        />
+        {toggler ? (
+          <ChatBox
+            sender={sender}
+            receiver={receiver}
+            messages={messages}
+            onSend={this.onSend}
+            onToggler={this.onToggler}
+          />
+        ) : (
+          <FriendList onToggler={this.onToggler} />
+        )}
         <Credentials
           onChange={this.onChange}
           receiver={this.state.receiver}

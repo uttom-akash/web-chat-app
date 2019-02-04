@@ -1,0 +1,41 @@
+.messages article {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.chat-screen .messages .proAvatar {
+  margin: 0.5rem;
+  width: 3rem;
+  height: 3rem;
+  border: 0.1rem solid #00bfff;
+  border-radius: 50%;
+}
+
+.chat-screen .messages img {
+  margin: 0.5rem;
+  width: 320px;
+  height: 240px;
+  border-radius: 10px;
+}
+
+.right {
+  flex-direction: row-reverse;
+}
+
+.msg {
+  margin-top: 1rem;
+  padding: 0.7rem;
+  border-radius: 15px;
+}
+
+.left .msg {
+  background-color: #00bfff;
+  color: rgb(25, 25, 26);
+}
+
+.right .msg {
+  border: 1px solid #00bfff;
+  color: #00bfff;
+}
