@@ -1,12 +1,10 @@
 import React, { Component } from "react";
-import Layout from "./client/components/pages/Layout";
-import "./index.css";
-
+import Layout from "../src/client/components/pages/Layout";
 class App extends Component {
   render() {
     return (
       <React.Fragment>
-        <Layout title="Chat box" />
+        <Layout />
       </React.Fragment>
     );
   }

@@ -3,15 +3,8 @@ import axios from "axios";
 import RootForm from "../form/RootForm";
 import Credentials from "../form/ConnectCredentials";
 import getSocket from "../socket/Socket";
-import SingleMessage from "./Message";
-import { Card, CardBody, CardHeader, CardFooter } from "reactstrap";
-import Vdo from "./VdoChat";
-import {
-  List,
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache
-} from "react-virtualized";
+import ChatBox from "./ChatBox";
+import FriendList from "./Freindlist";
 
 class Layout extends Component {
   socket = null;
@@ -26,15 +19,10 @@ class Layout extends Component {
     this.listRef = React.createRef();
   }
 
-  //Cell mesearer cache
-  cache = new CellMeasurerCache({
-    fixedWidth: true,
-    defaultHeight: 100
-  });
-
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
+
     this.socket.on("message", msg => this.addMessage(msg));
   };
 
@@ -42,6 +30,7 @@ class Layout extends Component {
 
   addMessage = message => {
     const messages = this.state.messages;
+    console.log("add ", message);
 
     messages.push(message);
     this.setState({ messages });
@@ -63,6 +52,7 @@ class Layout extends Component {
   onSet = ev => {
     ev.preventDefault();
     const { receiver, sender } = this.state;
+    console.log("onSet  ", receiver, sender);
 
     this.initSocket(receiver, sender);
     //get last 10 message
@@ -79,87 +69,37 @@ class Layout extends Component {
 
   onChange = ev => this.setState({ [ev.target.name]: ev.target.value });
 
-  rowRenderer = ({ index, key, parent, style }) => {
-    const msg = this.state.messages[index];
-    console.log(this.state.sender, msg.sender);
-
-    return (
-      <CellMeasurer
-        key={key}
-        cache={this.cache}
-        parent={parent}
-        columnIndex={0}
-        rowIndex={index}
-      >
-        <div style={style}>
-          {this.state.sender === msg.sender ? (
-            <SingleMessage msg={msg} me={true} />
-          ) : (
-            <SingleMessage msg={msg} me={false} />
-          )}
-        </div>
-      </CellMeasurer>
-    );
-  };
-
   //render
   render() {
     //component
+    const { sender, receiver, messages } = this.state;
+    console.log(messages);
+
     return (
       <div>
-        <div style={{ float: "left" }} />
-        <Card style={{ width: `${50}%`, float: "right" }}>
-          <CardHeader>
-            <Vdo
-              sender={this.state.sender}
-              receiver={this.state.receiver}
-              audio={true}
-              video={false}
-              btn={"audio call"}
-            />
-            <Vdo
-              sender={this.state.sender}
-              receiver={this.state.receiver}
-              audio={true}
-              video={true}
-              btn={"video call"}
-            />
-          </CardHeader>
-          <CardBody
-            style={{
-              width: `${100}%`,
-              height: "500px",
-              backgroundColor: "#F8F8FF"
-            }}
-          >
-            <AutoSizer>
-              {({ height, width }) => (
-                <List
-                  scrollToIndex={this.state.messages.length - 1}
-                  ref={this.listRef}
-                  height={height}
-                  rowCount={this.state.messages.length}
-                  deferredMeasurementCache={this.cache}
-                  rowHeight={this.cache.rowHeight}
-                  rowRenderer={this.rowRenderer}
-                  width={width}
-                  overscanRowCount={5}
-                  scrollToRow={this.state.messages.length}
-                />
-              )}
-            </AutoSizer>
-          </CardBody>
-
-          <CardFooter>
-            <RootForm onSend={this.onSend} />
-          </CardFooter>
-        </Card>
+        <ChatBox
+          sender={sender}
+          receiver={receiver}
+          messages={messages}
+          onSend={this.onSend}
+        />
         <Credentials
           onChange={this.onChange}
           receiver={this.state.receiver}
           sender={this.state.sender}
           onSubmit={this.onSet}
         />
+        {/* <video width="320" height="240" controls>
+          <source src="http://192.168.0.110:8080/api" type="video/mp4" />
+        </video>
+        <video src=>
+          <source
+            src="http://192.168.0.110:8080/api"
+            controls
+            type="video/mp4"
+            autoPlay
+          />
+        </video> */}
       </div>
     );
   }

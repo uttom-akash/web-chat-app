@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Card, Form, Button, Input } from "reactstrap";
+import axios from "axios";
+//import "../css/RootForm.css";
 
 class RootForm extends Component {
   state = {
@@ -30,6 +32,10 @@ class RootForm extends Component {
   // };
 
   onFileSend = filePicker => {
+    const fd = new FormData();
+    fd.append("file", filePicker);
+    //axios.post("/api/file", fd);
+
     this.props.onSend({
       fileName: filePicker.name,
       type: filePicker.type,
@@ -59,19 +65,36 @@ class RootForm extends Component {
 
   render() {
     return (
-      <Form onSubmit={this.onSubmit} style={{ padding: `5px` }}>
-        <Input type="file" name="file" onChange={this.onFileChange} />
-        <textarea
-          className=" form-control"
-          type="text"
-          name="message"
-          placeholder="message"
-          value={this.message}
-          onChange={this.onMessageChange}
-        />
-        <Button outline color="success">
-          Send
-        </Button>
+      <Form onSubmit={this.onSubmit}>
+        <section className="msg-compose">
+          <Input
+            type="file"
+            id="file"
+            name="file"
+            onChange={this.onFileChange}
+            style={{
+              width: "0.1px",
+              height: "0.1px",
+              opacity: "0",
+              overflow: "hidden",
+              position: "absolute",
+              zIndex: "-1"
+            }}
+          />
+          <label for="file">
+            <i className="fas fa-paperclip" />
+          </label>
+          <textarea
+            type="text"
+            name="message"
+            placeholder="say something"
+            value={this.message}
+            onChange={this.onMessageChange}
+          />
+          <button className="btn">
+            <i className="fab fa-telegram-plane" />
+          </button>
+        </section>
       </Form>
     );
   }

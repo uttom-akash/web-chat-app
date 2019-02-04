@@ -10,7 +10,7 @@ const ioc = io(server);
 
 app.use(express.json());
 app.use("/api", router);
-
+app.use(express.static("uploads"));
 ioc.on("connect", connectionHandle);
 
 // setInterval(() => {

@@ -25,7 +25,7 @@ class Vdo extends Component {
     //socket init
     this.socket = await getSocket(this.props.receiver, this.props.sender);
     this.onListen();
-
+    //const media=navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkit
     navigator.mediaDevices
       .getUserMedia({ video: this.props.video, audio: this.props.audio })
       .then(stream => {
@@ -50,7 +50,8 @@ class Vdo extends Component {
             this.socket.emit("candidate", event.candidate);
           }
         };
-      });
+      })
+      .catch(err => alert(err));
   };
 
   onCall = () => {
@@ -112,14 +113,15 @@ class Vdo extends Component {
   render() {
     return (
       <div className="d-inline">
-        <Button outline color="success" onClick={this.onStart}>
+        {/* <Button outline color="success" onClick={this.onStart}>
           {this.props.btn}
-        </Button>
-
+        </Button> */}
+        <button onClick={this.onStart} className="btn">
+          <i className={this.props.btn} />
+        </button>
         <Modal
           isOpen={this.state.isOpen}
           fade={true}
-          size="lg"
           style={{ width: "900px" }}
           centered
         >

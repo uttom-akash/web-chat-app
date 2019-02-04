@@ -1,0 +1,128 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.user-full-screen {
+  width: 100vw;
+  height: 100vh;
+  font-family: "Roboto", sans-serif;
+  font-weight: 100;
+  font-size: 10px;
+
+  background-color: rgb(95, 6, 179);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.user-box {
+  width: 60%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgb(19, 18, 18);
+}
+
+@media screen and (max-width: 600px) {
+  .user-box {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    box-shadow: 0.1rem 0.1rem 0.1rem 0.1rem rgb(185, 210, 233);
+  }
+}
+
+.user-box .header {
+  display: flex;
+  width: 90%;
+  padding: 1.5rem;
+  border-bottom: 1px solid rgb(81, 83, 85);
+}
+
+.user-box .header .me img {
+  width: 5.5rem;
+  height: 5.5rem;
+  border: 2px solid rgb(47, 185, 109);
+  border-radius: 50%;
+}
+
+.user-box .header .me {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 100%;
+}
+
+.user-box ul li {
+  list-style-type: none;
+}
+
+.user-box ul li .list {
+  display: flex;
+  border: none;
+  background-color: rgb(19, 18, 18);
+  border-bottom: 1px solid rgb(40, 40, 41);
+}
+
+.avatar {
+  display: flex;
+  margin: auto 0;
+  padding: 1rem;
+  position: relative;
+}
+
+.avatar img {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+}
+
+.avatar .active {
+  border: 2px solid rgb(47, 185, 109);
+}
+
+.avatar .inactive {
+  border: 2px solid rgb(160, 16, 16);
+}
+.avatar .online,
+.offline {
+  width: 1rem;
+  height: 1rem;
+  background-color: rgb(47, 185, 109);
+  border-radius: 50%;
+  position: absolute;
+  left: 4rem;
+}
+
+.avatar .offline {
+  background-color: rgb(160, 16, 16);
+}
+
+.users-list {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.username {
+  color: rgb(175, 178, 180);
+  margin: 0;
+  padding: 0;
+}
+
+.text {
+  font-size: 0.7rem;
+  color: rgb(130, 131, 133);
+  margin: auto 0;
+}
+
+.timestamp {
+  font-size: 0.7rem;
+  flex-grow: 0.5;
+  margin: auto 0;
+}
