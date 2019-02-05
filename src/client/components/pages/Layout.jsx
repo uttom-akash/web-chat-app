@@ -97,17 +97,6 @@ class Layout extends Component {
           sender={this.state.sender}
           onSubmit={this.onSet}
         />
-        {/* <video width="320" height="240" controls>
-          <source src="http://192.168.0.110:8080/api" type="video/mp4" />
-        </video>
-        <video src=>
-          <source
-            src="http://192.168.0.110:8080/api"
-            controls
-            type="video/mp4"
-            autoPlay
-          />
-        </video> */}
       </div>
     );
   }
