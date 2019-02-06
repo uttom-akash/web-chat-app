@@ -1,0 +1,22 @@
+.optional {
+  display: flex;
+  justify-content: flex-end;
+  background-color: rgb(25, 25, 26);
+}
+
+.optional .btn {
+  border-bottom: 1.5px solid rgb(25, 25, 26);
+  margin: 0;
+  padding: 0;
+}
+
+.optional i {
+  font-size: 1.5rem;
+  margin: 0.7rem;
+  color: #00bfff;
+  cursor: pointer;
+}
+
+.optional .btn:hover {
+  border-bottom: 1.5px solid #00bfff;
+}

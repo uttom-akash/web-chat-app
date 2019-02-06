@@ -38,7 +38,7 @@ class Upload extends Component {
           onChange={this.onFileChange}
           style={{ width: "0.1px", Height: "0.1px", opacity: "0" }}
         />
-        <label htmlFor="file">
+        <label htmlFor="file" className="btn">
           <i className="fa fa-upload" />
         </label>
       </div>

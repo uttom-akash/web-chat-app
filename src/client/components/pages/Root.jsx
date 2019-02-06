@@ -1,10 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import RootForm from "../form/RootForm";
-import Credentials from "../form/ConnectCredentials";
 import getSocket from "../socket/Socket";
-import ChatBox from "./ChatBox";
-import FriendList from "./Freindlist";
+import Show from "./Show";
 
 class Layout extends Component {
   socket = null;
@@ -13,14 +10,11 @@ class Layout extends Component {
     this.state = {
       messages: [],
       receiver: "",
-      sender: "",
-      toggler: true
+      sender: ""
     };
 
     this.listRef = React.createRef();
   }
-
-  onToggler = () => this.setState({ toggler: !this.state.toggler });
 
   //initialize
   initSocket = (receiver, sender) => {
@@ -52,8 +46,7 @@ class Layout extends Component {
     //   .catch(error => console.log(error));
   };
 
-  onSet = ev => {
-    ev.preventDefault();
+  onSet = () => {
     const { receiver, sender } = this.state;
     console.log("onSet  ", receiver, sender);
 
@@ -74,30 +67,17 @@ class Layout extends Component {
 
   //render
   render() {
-    //component
-    const { toggler, sender, receiver, messages } = this.state;
-    console.log(messages);
+    const { sender, receiver, messages } = this.state;
 
     return (
-      <div>
-        {toggler ? (
-          <ChatBox
-            sender={sender}
-            receiver={receiver}
-            messages={messages}
-            onSend={this.onSend}
-            onToggler={this.onToggler}
-          />
-        ) : (
-          <FriendList onToggler={this.onToggler} />
-        )}
-        <Credentials
-          onChange={this.onChange}
-          receiver={this.state.receiver}
-          sender={this.state.sender}
-          onSubmit={this.onSet}
-        />
-      </div>
+      <Show
+        onSend={this.onSend}
+        onChange={this.onChange}
+        onSet={this.onSet}
+        sender={sender}
+        receiver={receiver}
+        messages={messages}
+      />
     );
   }
 }

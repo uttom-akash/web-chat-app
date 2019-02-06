@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import RootForm from "../form/RootForm";
 import Vdo from "./VdoChat";
 import Upload from "../form/UploadForm";
+import ChatBoxHeader from "./ChatBoxHeader";
+
 import "../css/Chatbox.css";
 import {
   List,
@@ -40,54 +42,40 @@ class ChatBox extends Component {
   };
 
   render() {
-    const { messages, sender, receiver, onSend, onToggler } = this.props;
+    const {
+      messages,
+      sender,
+      receiver,
+      onSend,
+      backward,
+      forward
+    } = this.props;
     return (
-      <div className="full-screen">
-        <section className="chat-screen">
-          <section className="optional">
-            <Upload className="btn" />
-            <div className="btn">
-              <i className="fa fa-download" />
-            </div>
-
-            <button onClick={onToggler} className="btn">
-              <i className="fas fa-arrow-left" />
-            </button>
-            <Vdo
-              sender={sender}
-              receiver={receiver}
-              audio={true}
-              video={false}
-              btn="fa fa-phone"
-            />
-            <Vdo
-              sender={sender}
-              receiver={receiver}
-              audio={true}
-              video={true}
-              btn="fa fa-video-camera"
-            />
-          </section>
-
-          <section className="messages">
-            <AutoSizer>
-              {({ height, width }) => (
-                <List
-                  scrollToIndex={messages.length - 1}
-                  height={height}
-                  rowCount={messages.length}
-                  deferredMeasurementCache={this.cache}
-                  rowHeight={this.cache.rowHeight}
-                  rowRenderer={this.rowRenderer}
-                  width={width}
-                  overscanRowCount={5}
-                />
-              )}
-            </AutoSizer>
-          </section>
-          <RootForm onSend={onSend} />
+      <section className="chat-screen">
+        <ChatBoxHeader
+          sender={sender}
+          receiver={receiver}
+          backward={backward}
+          forward={forward}
+        />
+        <section className="messages">
+          <AutoSizer>
+            {({ height, width }) => (
+              <List
+                scrollToIndex={messages.length - 1}
+                height={height}
+                rowCount={messages.length}
+                deferredMeasurementCache={this.cache}
+                rowHeight={this.cache.rowHeight}
+                rowRenderer={this.rowRenderer}
+                width={width}
+                overscanRowCount={5}
+              />
+            )}
+          </AutoSizer>
         </section>
-      </div>
+        <RootForm onSend={onSend} />
+      </section>
     );
   }
 }

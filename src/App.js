@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import Layout from "../src/client/components/pages/Layout";
+import Root from "./client/components/pages/Root";
+import Route from "./client/components/route/Route";
 class App extends Component {
   render() {
-    return (
-      <React.Fragment>
-        <Layout />
-      </React.Fragment>
-    );
+    return <Root />;
   }
 }
 
