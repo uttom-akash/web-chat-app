@@ -7,7 +7,7 @@ import "../css/Show.css";
 import Download from "./Download";
 class Show extends Component {
   state = {
-    currentDisplay: "Friend-list"
+    currentDisplay: "Cover"
   };
 
   onSet = ev => {
@@ -75,7 +75,13 @@ class Show extends Component {
           />
         );
       case "Download":
-        return <Download backward={this.ChangeDisplayBackward} />;
+        return (
+          <Download
+            backward={this.ChangeDisplayBackward}
+            sender={sender}
+            receiver={receiver}
+          />
+        );
       default:
         return <div>Sorry not found</div>;
     }

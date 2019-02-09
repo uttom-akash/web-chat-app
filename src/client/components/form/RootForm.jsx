@@ -32,7 +32,11 @@ class RootForm extends Component {
   //     message: ""
   //   });
   // };
-
+  getDate = () => {
+    let date = new Date();
+    return `${date.getFullYear()}-${date.getMonth() +
+      1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+  };
   onFileSend = filePicker => {
     let reader = new FileReader();
     reader.onload = e => {
@@ -42,13 +46,15 @@ class RootForm extends Component {
         file: reader.result,
         size: filePicker.size,
         messageType: true,
-        message: ""
+        message: "",
+        date: this.getDate()
       });
     };
     reader.readAsDataURL(filePicker);
   };
   onSubmit = ev => {
     ev.preventDefault();
+
     const { filePicker, message } = this.state;
     if (filePicker) {
       if (filePicker.size <= this.defaultSize) this.onFileSend(filePicker);
@@ -62,11 +68,25 @@ class RootForm extends Component {
         file: null,
         size: "",
         messageType: false,
-        message
+        message,
+        date: this.getDate()
       });
     }
   };
 
+  handleOnkeyDown = ev => {
+    console.log("onkey");
+
+    ev.target.style.height = "inherit";
+    const computed = window.getComputedStyle(ev.target);
+    const height =
+      parseInt(computed.getPropertyValue("border-top-width"), 10) +
+      parseInt(computed.getPropertyValue("padding-top"), 10) +
+      ev.target.scrollHeight +
+      parseInt(computed.getPropertyValue("padding-bottom"), 10) +
+      parseInt(computed.getPropertyValue("border-bottom-width"), 10);
+    ev.target.style.height = `${height}px`;
+  };
   render() {
     return (
       <Form onSubmit={this.onSubmit}>
@@ -94,6 +114,7 @@ class RootForm extends Component {
             placeholder="say something"
             value={this.message}
             onChange={this.onMessageChange}
+            onKeyDown={this.handleOnkeyDown}
           />
           <button className="btn">
             <i className="fab fa-telegram-plane" />

@@ -1,5 +1,74 @@
+.download-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.download-screen .btn {
+  border-bottom: 1.5px solid rgb(25, 25, 26);
+  margin: 0;
+  padding: 0;
+}
+
+.btn i {
+  font-size: 1.5rem;
+  margin: 0.7rem;
+  color: #00bfff;
+  cursor: pointer;
+}
+
+.download-screen .btn:hover {
+  border-bottom: 1.5px solid #00bfff;
+}
+
 .download-box {
   width: 100%;
   height: 100%;
-  background-color: rgb(19, 18, 18);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.download-box .download-list {
+  width: 85%;
+}
+
+.download-list .download-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  padding: 3px;
+  border-bottom: 1px solid black;
+  border-right: 1px solid black;
+}
+
+.download-list .download-item:hover {
+  border-right: 1px solid #00bfff;
+}
+
+.file-container {
+  overflow: hidden;
+}
+
+.file-container .file-name {
+  margin: 0;
+}
+
+.file-container .file-type {
+  margin: 0;
+  font-style: italic;
+  font-size: 10px;
+  color: rgb(119, 119, 121);
+}
+
+.file-path i {
+  color: #00bfff;
+  padding: 10px;
+}
+
+.file-path i:hover {
+  color: blue;
+  padding: 10px;
 }

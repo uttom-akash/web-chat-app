@@ -116,9 +116,9 @@ class Vdo extends Component {
         {/* <Button outline color="success" onClick={this.onStart}>
           {this.props.btn}
         </Button> */}
-        <button onClick={this.onStart} className="btn">
+        <div onClick={this.onStart} className="btn">
           <i className={this.props.btn} />
-        </button>
+        </div>
         <Modal
           isOpen={this.state.isOpen}
           fade={true}

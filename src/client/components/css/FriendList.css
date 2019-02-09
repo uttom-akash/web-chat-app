@@ -28,18 +28,27 @@
   flex: 1 1 100%;
 }
 
+.user-box ul {
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  width: 90%;
+}
+
 .user-box ul li {
   list-style-type: none;
+  border-bottom: 1px solid rgb(40, 40, 41);
 }
 
 .user-box ul li .list {
   display: flex;
+  align-self: flex-start;
   border: none;
-  border-bottom: 1px solid rgb(40, 40, 41);
 }
 
-.user-box ul li .list:hover {
+.user-box ul li:hover {
   cursor: pointer;
+  border-bottom: 1px solid #00bfff;
 }
 
 .avatar {
@@ -84,13 +93,14 @@
 }
 
 .username {
-  color: rgb(175, 178, 180);
+  color: #00bfff;
   margin: 0;
   padding: 0;
 }
 
 .text {
   font-size: 0.7rem;
+  font-style: italic;
   color: rgb(130, 131, 133);
   margin: auto 0;
 }

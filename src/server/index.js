@@ -3,12 +3,11 @@ var http = require("http");
 var io = require("socket.io");
 var connectionHandle = require("./SocketHandle");
 var router = require("./ApiRequest");
-
 const app = express();
 const server = http.createServer(app);
 const ioc = io(server);
 
-app.use(express.json());
+app.use(express.json({ limit: "25mb" }));
 app.use("/api", router);
 app.use(express.static("uploads"));
 ioc.on("connect", connectionHandle);

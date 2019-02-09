@@ -25,9 +25,11 @@
 }
 
 .msg {
-  margin-top: 1rem;
-  padding: 0.7rem;
+  margin-top: 1%;
+  padding: 1%;
   border-radius: 15px;
+  max-width: 80%;
+  word-wrap: break-word;
 }
 
 .left .msg {

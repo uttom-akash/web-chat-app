@@ -19,7 +19,6 @@ class Layout extends Component {
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
-
     this.socket.on("message", msg => this.addMessage(msg));
   };
 
@@ -27,8 +26,6 @@ class Layout extends Component {
 
   addMessage = message => {
     const messages = this.state.messages;
-    console.log("add ", message);
-
     messages.push(message);
     this.setState({ messages });
   };
@@ -38,12 +35,14 @@ class Layout extends Component {
   onSend = data => {
     const messageObject = data;
     messageObject.sender = this.state.sender;
-    console.log(messageObject);
+    messageObject.receiver = this.state.receiver;
     this.socket.emit("message", messageObject);
     this.addMessage(messageObject);
-    // axios
-    //   .post("/api/save-message", { data: msgObj })
-    //   .catch(error => console.log(error));
+    console.log(messageObject);
+
+    axios
+      .post("/api/save-message", { data: messageObject })
+      .catch(error => console.log(error));
   };
 
   onSet = () => {
@@ -68,6 +67,7 @@ class Layout extends Component {
   //render
   render() {
     const { sender, receiver, messages } = this.state;
+    console.log(messages);
 
     return (
       <Show

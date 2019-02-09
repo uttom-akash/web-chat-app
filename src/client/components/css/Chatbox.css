@@ -11,6 +11,24 @@
   flex-direction: column;
   justify-content: flex-start;
   background-color: rgb(25, 25, 26);
-  overflow: auto;
+  overflow-x: hidden;
   flex-grow: 2;
+}
+
+::-webkit-scrollbar {
+  width: 1%;
+}
+
+::-webkit-scrollbar-track {
+  background: black;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #00bfff;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }

@@ -9,14 +9,13 @@ class ChatBoxHeader extends Component {
     const { sender, receiver, forward, backward } = this.props;
 
     return (
-      <section className="optional">
-        <Upload />
-        <div className="btn" onClick={forward}>
-          <i className="fa fa-download" />
-        </div>
-
+      <section className="menu-bar">
         <div className="btn" onClick={backward}>
           <i className="fas fa-arrow-left" />
+        </div>
+        <Upload sender={sender} receiver={receiver} />
+        <div className="btn" onClick={forward}>
+          <i className="fa fa-download" />
         </div>
         <Vdo
           sender={sender}

@@ -13,7 +13,7 @@
   color: rgb(189, 189, 196);
   border-radius: 20px;
   padding: 5px;
-  height: 2rem;
+  height: 2.5rem;
 }
 
 .msg-compose textarea:focus {

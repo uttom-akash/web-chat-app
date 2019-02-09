@@ -12,7 +12,7 @@ class FriendList extends Component {
           </div>
         </header>
         <ul>
-          <li>
+          <li tabIndex="0">
             <div className="list" onClick={this.props.forward}>
               <div className="avatar">
                 <img className="active" src="#" alt="bal" />
