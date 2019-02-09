@@ -168,9 +168,11 @@ router.post("/save-message", (req, res) => {
           ])
           .then(resultMes => {
             res.json({ status: "succes" });
-            fs.createWriteStream(`${filedir(type)}/${fileName}`).write(
-              new Buffer(file.split(",")[1], "base64")
-            );
+            if (messageType) {
+              fs.createWriteStream(`${filedir(type)}/${fileName}`).write(
+                new Buffer(file.split(",")[1], "base64")
+              );
+            }
           })
           .catch(err => res.status(400).json({ status: "failed" }));
       }

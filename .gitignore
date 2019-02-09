@@ -25,3 +25,6 @@ yarn-error.log*
 /uploads/images
 
 *.mp4
+*.jpg
+*.png
+*.mp3
