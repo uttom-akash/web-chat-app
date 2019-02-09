@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import RootForm from "../form/RootForm";
-import Vdo from "./VdoChat";
-import Upload from "../form/UploadForm";
 import ChatBoxHeader from "./ChatBoxHeader";
 
 import "../css/Chatbox.css";

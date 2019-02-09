@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ChatBox from "./ChatBox";
-import RootForm from "../form/RootForm";
 import FriendList from "./Freindlist";
 import Cover from "./Cover";
 import "../css/Show.css";
@@ -10,10 +9,11 @@ class Show extends Component {
     currentDisplay: "Cover"
   };
 
-  onSet = ev => {
-    ev.preventDefault();
-    this.setState({ currentDisplay: "Friend-list" });
-    this.props.onSet();
+  onLogin = loginData => {
+    return this.props.onLogin(loginData).then(res => {
+      this.setState({ currentDisplay: "Friend-list" });
+      return res;
+    });
   };
 
   ChangeDisplayForward = () => {
@@ -44,16 +44,24 @@ class Show extends Component {
   };
   showDisplay = () => {
     const { currentDisplay } = this.state;
-    const { sender, receiver, messages, onChange, onSend } = this.props;
+    const {
+      sender,
+      receiver,
+      messages,
+      onChange,
+      onSend,
+      onRegister
+    } = this.props;
 
     switch (currentDisplay) {
       case "Cover":
         return (
           <Cover
             onChange={onChange}
+            onRegister={onRegister}
             sender={sender}
             receiver={receiver}
-            onSet={this.onSet}
+            onLogin={this.onLogin}
           />
         );
       case "Friend-list":

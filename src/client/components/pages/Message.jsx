@@ -19,57 +19,30 @@ export default props => {
     case "vid":
       return (
         <article className={side}>
-          <img src={f} alt="all" className="proAvatar" />
-          <p className="msg">
-            <video width="320" height="240" controls>
-              <source src={msg.file} type="video/mp4" />
-            </video>
-          </p>
+          <img src={f} alt="avatar" className="proAvatar" />
+          <video src={msg.file} type="video/mp4" controls className="Video" />
         </article>
       );
     case "aud":
       return (
         <article className={side}>
-          <img src={f} alt="all" className="proAvatar" />
-
-          <p className="msg">
-            <audio controls>
-              <source type={msg.type} src={msg.file} />
-            </audio>
-          </p>
+          <img src={f} alt="avatar" className="proAvatar" />
+          <audio type={msg.type} src={msg.file} controls />
         </article>
       );
     case "ima":
       return (
         <article className={side}>
-          <img src={f} alt="all" className="proAvatar" />
-
-          <p className="msg">
-            <img src={msg.file} alt="message" />
-          </p>
+          <img src={f} alt="avatar" className="proAvatar" />
+          <img src={msg.file} alt="message" />
         </article>
       );
     default:
       return (
         <article className={side}>
-          <img src={f} alt="photo" className="proAvatar" />
+          <img src={f} alt="avatar" className="proAvatar" />
           <p className="msg">{msg.message}</p>
         </article>
       );
   }
 };
-
-//streaming
-// (
-//   <article className={side}>
-//     <img src="#" alt="all" />
-//     <p className="msg">
-//       <video width="320" height="240" controls>
-//         <source
-//           src={`http://192.168.0.110:8080/api/vdo?q=${msg.fileName}`}
-//           type="video/mp4"
-//         />
-//       </video>
-//     </p>
-//   </article>
-// );

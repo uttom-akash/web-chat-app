@@ -232,3 +232,40 @@ router.post("/get-message", (req, res) => {
     .catch(error => console.log(error));
 });
 module.exports = router;
+
+router.post("/register", (req, res) => {
+  const { userName, userEmail, password, profilePicture } = req.body.data;
+
+  const sql = `INSERT INTO Members(userName, userEmail, passwordHash) VALUES(?,?,?)`;
+  pool
+    .query(sql, [userName, userEmail, password])
+    .then(dbresult => {
+      fs.createWriteStream(
+        `./src/server/uploads/profile/${userEmail}.jpg`
+      ).write(new Buffer(profilePicture.split(",")[1], "base64"));
+      res.json({ userName, userEmail });
+    })
+    .catch(dberror =>
+      res.status(400).json({ error: "email is already in use" })
+    );
+});
+
+router.post("/login", (req, res) => {
+  const { userEmail, password } = req.body.data;
+  const sql = `SELECT userName FROM Members WHERE userEmail=? AND passwordHash=?`;
+
+  pool
+    .query(sql, [userEmail, password])
+    .then(dbresult => {
+      let content = fs.readFileSync(
+        `./src/server/uploads/profile/${userEmail}.jpg`,
+        "base64"
+      );
+      res.json({
+        userName: dbresult[0].userName,
+        userEmail: userEmail,
+        profilePicture: `data:image/jpg;base64,${content}`
+      });
+    })
+    .catch(err => res.status(400).json({ error: "user not found" }));
+});

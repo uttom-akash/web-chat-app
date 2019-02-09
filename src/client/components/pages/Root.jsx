@@ -10,7 +10,9 @@ class Layout extends Component {
     this.state = {
       messages: [],
       receiver: "",
-      sender: ""
+      userName: "",
+      userEmail: "",
+      profilePicture: ""
     };
 
     this.listRef = React.createRef();
@@ -45,22 +47,48 @@ class Layout extends Component {
       .catch(error => console.log(error));
   };
 
-  onSet = () => {
-    const { receiver, sender } = this.state;
-    console.log("onSet  ", receiver, sender);
-
-    this.initSocket(receiver, sender);
-    //get last 10 message
-    axios
-      .post("/api/get-message", {
-        data: {
-          receiver,
-          sender
-        }
-      })
-      .then(res => this.setState({ messages: res.data.messages }))
-      .catch(error => console.log(error));
+  onRegister = RegisterData => {
+    return axios.post("/api/register", { data: RegisterData }).then(res => {
+      this.setState({
+        userName: res.data.userName,
+        userEmail: res.data.userEmail,
+        profilePicture: res.data.profilePicture
+      });
+      sessionStorage.userEmail = res.data.userEmail;
+      return res;
+    });
   };
+
+  onLogin = loginData => {
+    console.log(loginData);
+
+    return axios.post("/api/login", { data: loginData }).then(res => {
+      this.setState({
+        userName: res.data.userName,
+        userEmail: res.data.userEmail,
+        profilePicture: res.data.profilePicture
+      });
+      sessionStorage.userEmail = res.data.userEmail;
+      return res;
+    });
+  };
+
+  // onLogin = () => {
+  //   const { receiver, sender } = this.state;
+  //   console.log("onSet  ", receiver, sender);
+
+  //   this.initSocket(receiver, sender);
+  //   //get last 10 message
+  //   axios
+  //     .post("/api/get-message", {
+  //       data: {
+  //         receiver,
+  //         sender
+  //       }
+  //     })
+  //     .then(res => this.setState({ messages: res.data.messages }))
+  //     .catch(error => console.log(error));
+  // };
 
   onChange = ev => this.setState({ [ev.target.name]: ev.target.value });
 
@@ -73,7 +101,8 @@ class Layout extends Component {
       <Show
         onSend={this.onSend}
         onChange={this.onChange}
-        onSet={this.onSet}
+        onLogin={this.onLogin}
+        onRegister={this.onRegister}
         sender={sender}
         receiver={receiver}
         messages={messages}

@@ -1,18 +1,40 @@
 import React, { Component } from "react";
 import Credentials from "../form/Credentials";
 import "../css/Cover.css";
+import RegisterForm from "../form/RegisterForm";
+
 class Cover extends Component {
-  state = {};
+  state = {
+    view: false
+  };
+
+  onViewChange = () => this.setState({ view: !this.state.view });
+
+  getView = () => {
+    const { onChange, sender, receiver, onLogin, onRegister } = this.props;
+    const { view } = this.state;
+
+    const View = view ? (
+      <RegisterForm onRegister={onRegister} />
+    ) : (
+      <Credentials
+        onChange={onChange}
+        receiver={receiver}
+        sender={sender}
+        onLogin={onLogin}
+      />
+    );
+
+    return View;
+  };
+
   render() {
-    const { onChange, sender, receiver, onSet } = this.props;
     return (
       <div className="Cover">
-        <Credentials
-          onChange={onChange}
-          receiver={receiver}
-          sender={sender}
-          onSubmit={onSet}
-        />
+        <button className="Registerbtn" onClick={this.onViewChange}>
+          Register
+        </button>
+        <div className="Form">{this.getView()}</div>
       </div>
     );
   }

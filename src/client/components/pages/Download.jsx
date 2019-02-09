@@ -35,7 +35,7 @@ class Download extends Component {
             <p className="file-type">{item.mimeType}</p>
           </div>
           <a href={item.path} className="file-path">
-            <i class="fas fa-arrow-down" />
+            <i className="fas fa-arrow-down" />
           </a>
         </li>
       );
