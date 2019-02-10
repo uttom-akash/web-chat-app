@@ -8,11 +8,11 @@ class Download extends Component {
   };
 
   componentDidMount = () => {
-    //const { sender, receiver } = this.props;
-    const sender = "i.akash.se@gmail.com";
-    const receiver = "akash.se@gmail.com";
+    const { sender, receiver } = this.props;
     axios
-      .post("/api/download-list", { data: { sender, receiver } })
+      .post("/api/download-list", {
+        data: { sender, receiver: receiver.receiverEmail }
+      })
       .then(res => this.setState({ files: res.data.downloadResult }));
   };
 
@@ -44,7 +44,7 @@ class Download extends Component {
   };
 
   render() {
-    const { backward } = this.props;
+    const { backward, receiver } = this.props;
     return (
       <section className="download-screen">
         <div className="btn" onClick={backward}>

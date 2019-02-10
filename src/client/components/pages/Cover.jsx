@@ -11,18 +11,13 @@ class Cover extends Component {
   onViewChange = () => this.setState({ view: !this.state.view });
 
   getView = () => {
-    const { onChange, sender, receiver, onLogin, onRegister } = this.props;
+    const { onLogin, onRegister } = this.props;
     const { view } = this.state;
 
     const View = view ? (
       <RegisterForm onRegister={onRegister} />
     ) : (
-      <Credentials
-        onChange={onChange}
-        receiver={receiver}
-        sender={sender}
-        onLogin={onLogin}
-      />
+      <Credentials onLogin={onLogin} />
     );
 
     return View;

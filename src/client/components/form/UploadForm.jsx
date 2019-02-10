@@ -10,10 +10,7 @@ class Upload extends Component {
 
   onFileChange = ev => {
     const filePicker = ev.target.files[0];
-    //const { sender, receiver } = this.props;
-    const sender = "i.akash.se@gmail.com";
-    const receiver = "akash.se@gmail.com";
-
+    const { sender, receiver } = this.props;
     const fd = new FormData();
     fd.append("file", filePicker);
     fd.append("sender", sender);

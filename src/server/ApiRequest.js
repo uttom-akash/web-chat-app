@@ -59,6 +59,7 @@ router.post("/upload", uploads.single("file"), (req, res) => {
 router.post("/download-list", (req, res) => {
   const { sender, receiver } = req.body.data;
   const room = roomName(sender, receiver);
+  console.log(req.body.data, " ", room);
 
   let sql = `SELECT id FROM rooms WHERE room=?`;
 
@@ -200,6 +201,8 @@ router.post("/save-message", (req, res) => {
 
 router.post("/get-message", (req, res) => {
   const { receiver, sender } = req.body.data;
+  console.log(req.body);
+
   const room = roomName(receiver, sender);
 
   //checking if there is chat room
@@ -243,7 +246,11 @@ router.post("/register", (req, res) => {
       fs.createWriteStream(
         `./src/server/uploads/profile/${userEmail}.jpg`
       ).write(new Buffer(profilePicture.split(",")[1], "base64"));
-      res.json({ userName, userEmail });
+      res.json({
+        userName,
+        userEmail,
+        profilePicture
+      });
     })
     .catch(dberror =>
       res.status(400).json({ error: "email is already in use" })
@@ -257,15 +264,69 @@ router.post("/login", (req, res) => {
   pool
     .query(sql, [userEmail, password])
     .then(dbresult => {
-      let content = fs.readFileSync(
-        `./src/server/uploads/profile/${userEmail}.jpg`,
-        "base64"
-      );
       res.json({
         userName: dbresult[0].userName,
         userEmail: userEmail,
-        profilePicture: `data:image/jpg;base64,${content}`
+        profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
       });
     })
     .catch(err => res.status(400).json({ error: "user not found" }));
 });
+
+router.post("/current-user", (req, res) => {
+  const { userEmail } = req.body.data;
+  const sql = `SELECT userName FROM Members WHERE userEmail=?`;
+
+  pool
+    .query(sql, [userEmail])
+    .then(dbresult => {
+      res.json({
+        userName: dbresult[0].userName,
+        userEmail: userEmail,
+        profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
+      });
+    })
+    .catch(err => res.status(400).json({ error: "user not found" }));
+});
+
+router.post("/get-friends", (req, res) => {
+  const { userEmail } = req.body.data;
+  //get my uid
+  getUid(userEmail).then(uid => {
+    //get friends uid
+    getFriendsUid(uid).then(friendsUidList => {
+      let friendsInfoList = friendsUidList.map(friendUid =>
+        getProfileInfo(friendUid.secondId).then(profileinfo => profileinfo)
+      );
+      Promise.all(friendsInfoList).then(Friendlist => res.json({ Friendlist }));
+    });
+  });
+});
+
+const getRoomId = () => {};
+
+const getUid = userEmail => {
+  let sql = `SELECT uid FROM Members WHERE userEmail=?`;
+  return pool.query(sql, [userEmail]).then(dbresult => dbresult[0].uid);
+};
+
+const getFriendsUid = uid => {
+  let sql = `SELECT secondId FROM friends WHERE firstId=? LIMIT 5`;
+  return pool.query(sql, [uid]);
+};
+
+const getProfileInfo = uid => {
+  let sql = `SELECT userName,userEmail FROM Members WHERE uid=?`;
+  return pool.query(sql, [uid]).then(dbresult => {
+    return {
+      userName: dbresult[0].userName,
+      userEmail: dbresult[0].userEmail,
+      profilePicture: `data:image/jpg;base64,${getProfilePicture(
+        dbresult[0].userEmail
+      )}`
+    };
+  });
+};
+
+const getProfilePicture = userEmail =>
+  fs.readFileSync(`./src/server/uploads/profile/${userEmail}.jpg`, "base64");

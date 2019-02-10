@@ -17,7 +17,7 @@ class ChatBox extends Component {
   });
 
   rowRenderer = ({ index, key, parent, style }) => {
-    const { sender, messages } = this.props;
+    const { user, receiver, messages } = this.props;
     const msg = messages[index];
 
     return (
@@ -29,10 +29,18 @@ class ChatBox extends Component {
         rowIndex={index}
       >
         <div style={style}>
-          {sender === msg.sender ? (
-            <SingleMessage msg={msg} me={true} />
+          {user.userEmail === msg.sender ? (
+            <SingleMessage
+              msg={msg}
+              owner={user.userProfilePicture}
+              me={true}
+            />
           ) : (
-            <SingleMessage msg={msg} me={false} />
+            <SingleMessage
+              msg={msg}
+              owner={receiver.receiverProfilePicture}
+              me={false}
+            />
           )}
         </div>
       </CellMeasurer>
@@ -40,19 +48,13 @@ class ChatBox extends Component {
   };
 
   render() {
-    const {
-      messages,
-      sender,
-      receiver,
-      onSend,
-      backward,
-      forward
-    } = this.props;
+    const { messages, user, receiver, onSend, backward, forward } = this.props;
     return (
       <section className="chat-screen">
         <ChatBoxHeader
-          sender={sender}
-          receiver={receiver}
+          sender={user.userEmail}
+          receiver={receiver.receiverEmail}
+          receiverName={receiver.receiverName}
           backward={backward}
           forward={forward}
         />

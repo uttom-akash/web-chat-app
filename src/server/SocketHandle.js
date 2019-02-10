@@ -2,7 +2,7 @@ var Query = require("./Query");
 
 const connectionHandle = socket => {
   Query.createPrivateRoom(
-    socket.handshake.query.to,
+    socket.handshake.query.receiver,
     socket.handshake.query.sender
   )
     .then(room => {

@@ -9,16 +9,43 @@ class Show extends Component {
     currentDisplay: "Cover"
   };
 
+  componentDidMount = () => {
+    const userEmail = sessionStorage.userEmail;
+    if (userEmail) {
+      this.props.onRefresh(userEmail).then(res => {
+        const view = sessionStorage.view;
+        if (view) this.setState({ currentDisplay: view });
+      });
+    }
+  };
+
   onLogin = loginData => {
     return this.props.onLogin(loginData).then(res => {
-      this.setState({ currentDisplay: "Friend-list" });
+      this.ChangeDisplayForward();
+
+      return res;
+    });
+  };
+
+  onSelectFriend = friendData => {
+    this.props
+      .onSelectFriend(friendData)
+      .then(res => this.ChangeDisplayForward());
+  };
+  onRegister = RegisterData => {
+    return this.props.onRegister(RegisterData).then(res => {
+      this.ChangeDisplayForward();
       return res;
     });
   };
 
   ChangeDisplayForward = () => {
     const { currentDisplay } = this.state;
+
     switch (currentDisplay) {
+      case "Cover":
+        this.setState({ currentDisplay: "Friend-list" });
+        return;
       case "Friend-list":
         this.setState({ currentDisplay: "Chat-box" });
         return;
@@ -29,6 +56,12 @@ class Show extends Component {
         return;
     }
   };
+
+  componentDidUpdate = () => {
+    if (this.state.currentDisplay !== "Cover")
+      sessionStorage.view = this.state.currentDisplay;
+  };
+
   ChangeDisplayBackward = () => {
     const { currentDisplay } = this.state;
     switch (currentDisplay) {
@@ -42,39 +75,27 @@ class Show extends Component {
         return;
     }
   };
+
   showDisplay = () => {
     const { currentDisplay } = this.state;
-    const {
-      sender,
-      receiver,
-      messages,
-      onChange,
-      onSend,
-      onRegister
-    } = this.props;
+    const { user, receiver, messages, onSend, onGetFriends } = this.props;
 
     switch (currentDisplay) {
       case "Cover":
-        return (
-          <Cover
-            onChange={onChange}
-            onRegister={onRegister}
-            sender={sender}
-            receiver={receiver}
-            onLogin={this.onLogin}
-          />
-        );
+        return <Cover onRegister={this.onRegister} onLogin={this.onLogin} />;
       case "Friend-list":
         return (
           <FriendList
+            onSelectFriend={this.onSelectFriend}
             forward={this.ChangeDisplayForward}
-            backward={this.ChangeDisplayBackward}
+            onGetFriends={onGetFriends}
+            profilePicture={user.userProfilePicture}
           />
         );
       case "Chat-box":
         return (
           <ChatBox
-            sender={sender}
+            user={user}
             receiver={receiver}
             messages={messages}
             onSend={onSend}
@@ -86,7 +107,7 @@ class Show extends Component {
         return (
           <Download
             backward={this.ChangeDisplayBackward}
-            sender={sender}
+            sender={user.userEmail}
             receiver={receiver}
           />
         );
