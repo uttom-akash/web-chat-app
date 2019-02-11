@@ -21,20 +21,20 @@ class FriendList extends Component {
         <li tabIndex={index} key={index}>
           <div
             className="list"
-            onClick={() => this.props.onSelectFriend(friend)}
+            onClick={() => this.props.onSelectFriend(friend.profile)}
           >
             <div className="avatar">
               <img
                 className="active"
-                src={friend.profilePicture}
+                src={friend.profile.profilePicture}
                 alt="Friend"
               />
               <div className="online" />
             </div>
             <div className="users-list">
-              <h6 className="username">{friend.userName}</h6>
-              <p className="text">Can't wait to see you ??????</p>
-              <code className="timestamp">8 :32</code>
+              <h6 className="username">{friend.profile.userName}</h6>
+              <p className="text">{friend.messages.message}</p>
+              <code className="timestamp">{friend.messages.date}</code>
             </div>
           </div>
         </li>

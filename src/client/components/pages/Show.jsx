@@ -14,7 +14,7 @@ class Show extends Component {
     if (userEmail) {
       this.props.onRefresh(userEmail).then(res => {
         const view = sessionStorage.view;
-        if (view) this.setState({ currentDisplay: view });
+        if (view) this.setState({ currentDisplay: "Friend-list" });
       });
     }
   };

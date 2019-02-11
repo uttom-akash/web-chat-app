@@ -27,12 +27,16 @@ class Root extends Component {
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
-    this.socket.on("message", msg => this.addMessage(msg));
+    this.socket.on("message", msg => this.addMessage(msg, "socket"));
   };
 
   //adding message
 
-  addMessage = message => {
+  addMessage = (message, from) => {
+    console.log("      ------------", from, "---------------  ");
+    console.log(message);
+    console.log("      ---------------------------  ");
+
     const messages = this.state.messages;
     messages.push(message);
     this.setState({ messages });
@@ -45,8 +49,8 @@ class Root extends Component {
     messageObject.sender = this.state.user.userEmail;
     messageObject.receiver = this.state.receiver.receiverEmail;
     this.socket.emit("message", messageObject);
-    this.addMessage(messageObject);
-    console.log(messageObject);
+
+    this.addMessage(messageObject, "user");
 
     axios
       .post("/api/save-message", { data: messageObject })

@@ -29,55 +29,33 @@ const router = express.Router();
 router.post("/upload", uploads.single("file"), (req, res) => {
   console.log(req.body);
 
-  const { receiver, sender } = req.body;
+  const { receiver, sender, date } = req.body;
   const { originalname, mimetype } = req.file;
-  const room = roomName(receiver, sender);
 
-  let sql = `SELECT id FROM rooms WHERE room=?`;
+  dbGetRoomId(receiver, sender).then(roomId => {
+    let sql = `INSERT INTO uploads(roomId,fileName,mimeType,path,date) VALUES(?,?,?,?,?)`;
+    const path = `http://192.168.0.110:8080/api/download?q=${filedir(
+      mimetype
+    )}/${originalname}`;
 
-  pool
-    .query(sql, [room])
-    .then(result => {
-      //saving message messages table
-      const id = result[0].id;
-
-      if (id) {
-        let sql = `INSERT INTO uploads(roomId,fileName,mimeType,path) VALUES(?,?,?,?)`;
-        const path = `http://192.168.0.110:8080/api/download?q=${filedir(
-          mimetype
-        )}/${originalname}`;
-
-        pool
-          .query(sql, [id, originalname, mimetype, path])
-          .then(resultMes => res.json({ status: "succes" }))
-          .catch(err => res.status(400).json({ status: "failed" }));
-      }
-    })
-    .catch(uploadErr => console.log(uploadErr));
+    pool
+      .query(sql, [roomId, originalname, mimetype, path, date])
+      .then(resultMes => res.json({ status: "succes" }))
+      .catch(err => res.status(400).json({ status: "failed" }));
+  });
 });
 
 router.post("/download-list", (req, res) => {
   const { sender, receiver } = req.body.data;
-  const room = roomName(sender, receiver);
-  console.log(req.body.data, " ", room);
 
-  let sql = `SELECT id FROM rooms WHERE room=?`;
+  dbGetRoomId(receiver, sender).then(roomId => {
+    let sql = `SELECT fileName,mimeType,path,date FROM uploads WHERE roomId=? ORDER BY id DESC LIMIT 10`;
 
-  pool
-    .query(sql, [room])
-    .then(result => {
-      const id = result[0].id;
-
-      if (id) {
-        let sql = `SELECT fileName,mimeType,path FROM uploads WHERE roomId=? ORDER BY id DESC LIMIT 10`;
-
-        pool
-          .query(sql, [id])
-          .then(downloadResult => res.json({ downloadResult }))
-          .catch(err => res.status(400).json({ status: "failed" }));
-      }
-    })
-    .catch(downloadErr => console.log(downloadErr));
+    pool
+      .query(sql, [roomId])
+      .then(downloadResult => res.json({ downloadResult }))
+      .catch(err => res.status(400).json({ status: "failed" }));
+  });
 });
 
 router.get("/download", (req, res) => {
@@ -142,43 +120,30 @@ router.post("/save-message", (req, res) => {
     date
   } = req.body.data;
 
-  console.log(date);
-
-  const room = roomName(receiver, sender);
-
-  //finding room id from  rooms table
-  let sql = `SELECT id FROM rooms WHERE room=?`;
-  pool
-    .query(sql, [room])
-    .then(result => {
-      //saving message messages table
-      const id = result[0].id;
-
-      if (id) {
-        sql = `INSERT INTO messages(roomId,message,sender,fileName,type,messageType,date) 
-        VALUES(?,?,?,?,?,?,?)`;
-        pool
-          .query(sql, [
-            result[0].id,
-            message,
-            sender,
-            fileName,
-            type,
-            messageType,
-            date
-          ])
-          .then(resultMes => {
-            res.json({ status: "succes" });
-            if (messageType) {
-              fs.createWriteStream(`${filedir(type)}/${fileName}`).write(
-                new Buffer(file.split(",")[1], "base64")
-              );
-            }
-          })
-          .catch(err => res.status(400).json({ status: "failed" }));
-      }
-    })
-    .catch(error => console.log(error));
+  dbGetRoomId(receiver, sender).then(roomId => {
+    let sql = `INSERT INTO messages(roomId,message,sender,fileName,mimeType,messageType,date,seen) 
+    VALUES(?,?,?,?,?,?,?,?)`;
+    pool
+      .query(sql, [
+        roomId,
+        message,
+        sender,
+        fileName,
+        type,
+        messageType,
+        date,
+        false
+      ])
+      .then(resultMes => {
+        res.json({ status: "succes" });
+        if (messageType) {
+          fs.createWriteStream(`${filedir(type)}/${fileName}`).write(
+            new Buffer(file.split(",")[1], "base64")
+          );
+        }
+      })
+      .catch(err => res.status(400).json({ status: "failed" }));
+  });
 });
 
 //Getting messages
@@ -201,47 +166,35 @@ router.post("/save-message", (req, res) => {
 
 router.post("/get-message", (req, res) => {
   const { receiver, sender } = req.body.data;
-  console.log(req.body);
 
-  const room = roomName(receiver, sender);
-
-  //checking if there is chat room
-  let sql = `SELECT id FROM rooms WHERE room=?`;
-  pool
-    .query(sql, [room])
-    .then(result => {
-      //geting message from messages table
-      if (result[0].id) {
-        sql = `SELECT message,sender,fileName,type,messageType,date FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 1`;
-        pool
-          .query(sql, [result[0].id])
-          .then(resultMes => {
-            const resultMessages = resultMes.map(item => {
-              item.file = "";
-              if (item.messageType) {
-                const content = fs.readFileSync(
-                  `${filedir(item.type)}/${item.fileName}`,
-                  { encoding: "base64" }
-                );
-                item.file = `data:${item.type};base64,${content}`;
-              }
-              return item;
-            });
-            res.json({ messages: resultMessages });
-          })
-          .catch(err => res.status(400).json({ status: "failed" }));
-      }
-    })
-    .catch(error => console.log(error));
+  dbGetRoomId(receiver, sender).then(roomId => {
+    let sql = `SELECT message,sender,fileName,mimeType,messageType,date,seen FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 1`;
+    pool
+      .query(sql, [roomId])
+      .then(resultMes => {
+        const resultMessages = resultMes.map(item => {
+          item.file = "";
+          if (item.messageType) {
+            const content = fs.readFileSync(
+              `${filedir(item.type)}/${item.fileName}`,
+              { encoding: "base64" }
+            );
+            item.file = `data:${item.type};base64,${content}`;
+          }
+          return item;
+        });
+        res.json({ messages: resultMessages });
+      })
+      .catch(err => res.status(400).json({ status: "failed" }));
+  });
 });
-module.exports = router;
 
 router.post("/register", (req, res) => {
   const { userName, userEmail, password, profilePicture } = req.body.data;
 
-  const sql = `INSERT INTO Members(userName, userEmail, passwordHash) VALUES(?,?,?)`;
+  const sql = `INSERT INTO users(userName, userEmail, passwordHash,active,date) VALUES(?,?,?,?,?)`;
   pool
-    .query(sql, [userName, userEmail, password])
+    .query(sql, [userName, userEmail, password, true, "2019-2-11"])
     .then(dbresult => {
       fs.createWriteStream(
         `./src/server/uploads/profile/${userEmail}.jpg`
@@ -259,30 +212,36 @@ router.post("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
   const { userEmail, password } = req.body.data;
-  const sql = `SELECT userName FROM Members WHERE userEmail=? AND passwordHash=?`;
+  let sql = `SELECT userName,active,date FROM users WHERE userEmail=? AND passwordHash=?`;
 
   pool
     .query(sql, [userEmail, password])
     .then(dbresult => {
+      const { userName, active, date } = dbresult[0];
       res.json({
-        userName: dbresult[0].userName,
-        userEmail: userEmail,
+        userName,
+        userEmail,
+        active,
+        date,
         profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
       });
     })
-    .catch(err => res.status(400).json({ error: "user not found" }));
+    .catch(err => console.log(err));
 });
 
 router.post("/current-user", (req, res) => {
   const { userEmail } = req.body.data;
-  const sql = `SELECT userName FROM Members WHERE userEmail=?`;
+  const sql = `SELECT userName,active,date FROM users WHERE userEmail=?`;
 
   pool
     .query(sql, [userEmail])
     .then(dbresult => {
+      const { userName, active, date } = dbresult[0];
       res.json({
-        userName: dbresult[0].userName,
-        userEmail: userEmail,
+        userName,
+        userEmail,
+        active,
+        date,
         profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
       });
     })
@@ -291,32 +250,71 @@ router.post("/current-user", (req, res) => {
 
 router.post("/get-friends", (req, res) => {
   const { userEmail } = req.body.data;
+
   //get my uid
-  getUid(userEmail).then(uid => {
+  dbGetUid(userEmail).then(uid => {
+    console.log("mine : ", uid);
+
     //get friends uid
-    getFriendsUid(uid).then(friendsUidList => {
-      let friendsInfoList = friendsUidList.map(friendUid =>
-        getProfileInfo(friendUid.secondId).then(profileinfo => profileinfo)
+    dbGetFriendsUid(uid).then(friendsUidList => {
+      let friendsInfoList = friendsUidList.map(
+        ({ secondId: friendUid, roomId }) =>
+          dbGetProfileInfo(friendUid).then(profileinfo =>
+            dbGetlastMessage(roomId, 1).then(messages => {
+              return {
+                profile: profileinfo,
+                messages
+              };
+            })
+          )
       );
+
       Promise.all(friendsInfoList).then(Friendlist => res.json({ Friendlist }));
     });
   });
 });
 
-const getRoomId = () => {};
+const dbGetlastMessage = roomId => {
+  let sql = `SELECT message,messageType,date,seen FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 1`;
+  return pool
+    .query(sql, [roomId])
+    .then(resultMes => {
+      let item = {};
+      item.message = "";
+      item.date = "";
+      if (resultMes.length) {
+        item = resultMes[0];
+        if (item.messageType) {
+          item.message = "media file";
+        }
+      }
+      return item;
+    })
+    .catch(err => console.log(err));
+};
 
-const getUid = userEmail => {
-  let sql = `SELECT uid FROM Members WHERE userEmail=?`;
+const dbGetRoomId = (receiver, sender) => {
+  const room = roomName(receiver, sender);
+
+  let sql = `SELECT id FROM rooms WHERE room=?`;
+  return pool
+    .query(sql, [room])
+    .then(dbresult => dbresult[0].id)
+    .catch(dberr => console.log(dberr));
+};
+
+const dbGetUid = userEmail => {
+  let sql = `SELECT uid FROM users WHERE userEmail=?`;
   return pool.query(sql, [userEmail]).then(dbresult => dbresult[0].uid);
 };
 
-const getFriendsUid = uid => {
-  let sql = `SELECT secondId FROM friends WHERE firstId=? LIMIT 5`;
+const dbGetFriendsUid = uid => {
+  let sql = `SELECT secondId,roomId FROM friends WHERE firstId=? LIMIT 5`;
   return pool.query(sql, [uid]);
 };
 
-const getProfileInfo = uid => {
-  let sql = `SELECT userName,userEmail FROM Members WHERE uid=?`;
+const dbGetProfileInfo = uid => {
+  let sql = `SELECT userName,userEmail FROM users WHERE uid=?`;
   return pool.query(sql, [uid]).then(dbresult => {
     return {
       userName: dbresult[0].userName,
@@ -330,3 +328,5 @@ const getProfileInfo = uid => {
 
 const getProfilePicture = userEmail =>
   fs.readFileSync(`./src/server/uploads/profile/${userEmail}.jpg`, "base64");
+
+module.exports = router;

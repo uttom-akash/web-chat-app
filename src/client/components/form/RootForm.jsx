@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import { Form, Input } from "reactstrap";
 import "../css/RootForm.css";
+import { getDateTime } from "../util/Date";
+
 class RootForm extends Component {
   constructor(props) {
     super(props);
@@ -33,12 +35,9 @@ class RootForm extends Component {
   //   });
   // };
 
-  getDate = () => {
-    let date = new Date();
-    return `${date.getFullYear()}-${date.getMonth() +
-      1}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-  };
   onFileSend = filePicker => {
+    console.log("file : ", filePicker);
+
     let reader = new FileReader();
     reader.onload = e => {
       this.props.onSend({
@@ -48,7 +47,7 @@ class RootForm extends Component {
         size: filePicker.size,
         messageType: true,
         message: "",
-        date: this.getDate()
+        date: getDateTime()
       });
     };
     reader.readAsDataURL(filePicker);
@@ -70,7 +69,7 @@ class RootForm extends Component {
         size: "",
         messageType: false,
         message,
-        date: this.getDate()
+        date: getDateTime()
       });
     }
   };

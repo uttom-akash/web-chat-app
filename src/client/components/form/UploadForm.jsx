@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Convert from "../util/Converter";
-
+import { getDateTime } from "../util/Date";
 class Upload extends Component {
   state = {
     loaded: 0,
@@ -15,6 +15,7 @@ class Upload extends Component {
     fd.append("file", filePicker);
     fd.append("sender", sender);
     fd.append("receiver", receiver);
+    fd.append("date", getDateTime());
 
     this.setState({ total: filePicker.size });
 
