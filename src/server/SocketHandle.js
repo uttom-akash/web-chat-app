@@ -15,7 +15,10 @@ const connectionHandle = socket => {
       socket.on("leave", msg => socket.to(room).emit("leave", msg));
 
       //text chat
-      socket.on("message", msg => socket.to(room).emit("message", msg));
+      socket.on("requestMessage", msg => {
+        console.log("message ::::::::msg::::::::      \n", msg);
+        socket.broadcast.to(room).emit("responseMessage", msg);
+      });
     })
     .catch(err => console.log(err));
 };

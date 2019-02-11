@@ -4,6 +4,7 @@ import FriendList from "./Freindlist";
 import Cover from "./Cover";
 import "../css/Show.css";
 import Download from "./Download";
+import FindNewFriend from "./FindNewFriend";
 class Show extends Component {
   state = {
     currentDisplay: "Cover"
@@ -13,8 +14,7 @@ class Show extends Component {
     const userEmail = sessionStorage.userEmail;
     if (userEmail) {
       this.props.onRefresh(userEmail).then(res => {
-        const view = sessionStorage.view;
-        if (view) this.setState({ currentDisplay: "Friend-list" });
+        this.setState({ currentDisplay: "Friend-list" });
       });
     }
   };
@@ -39,6 +39,10 @@ class Show extends Component {
     });
   };
 
+  onAddFriend = () => {
+    this.setState({ currentDisplay: "Add-friend" });
+  };
+
   ChangeDisplayForward = () => {
     const { currentDisplay } = this.state;
 
@@ -57,15 +61,11 @@ class Show extends Component {
     }
   };
 
-  componentDidUpdate = () => {
-    if (this.state.currentDisplay !== "Cover")
-      sessionStorage.view = this.state.currentDisplay;
-  };
-
   ChangeDisplayBackward = () => {
     const { currentDisplay } = this.state;
     switch (currentDisplay) {
       case "Chat-box":
+      case "Add-friend":
         this.setState({ currentDisplay: "Friend-list" });
         return;
       case "Download":
@@ -90,8 +90,11 @@ class Show extends Component {
             forward={this.ChangeDisplayForward}
             onGetFriends={onGetFriends}
             profilePicture={user.userProfilePicture}
+            onAddFriend={this.onAddFriend}
           />
         );
+      case "Add-friend":
+        return <FindNewFriend />;
       case "Chat-box":
         return (
           <ChatBox

@@ -27,16 +27,12 @@ class Root extends Component {
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
-    this.socket.on("message", msg => this.addMessage(msg, "socket"));
+    this.socket.on("responseMessage", msg => this.addMessage(msg, "socket"));
   };
 
   //adding message
 
   addMessage = (message, from) => {
-    console.log("      ------------", from, "---------------  ");
-    console.log(message);
-    console.log("      ---------------------------  ");
-
     const messages = this.state.messages;
     messages.push(message);
     this.setState({ messages });
@@ -48,7 +44,7 @@ class Root extends Component {
     const messageObject = data;
     messageObject.sender = this.state.user.userEmail;
     messageObject.receiver = this.state.receiver.receiverEmail;
-    this.socket.emit("message", messageObject);
+    this.socket.emit("requestMessage", messageObject);
 
     this.addMessage(messageObject, "user");
 
@@ -110,7 +106,7 @@ class Root extends Component {
     });
     const receiver = friendData.userEmail;
     const sender = this.state.user.userEmail;
-
+    if (this.socket) this.socket.close();
     this.initSocket(receiver, sender);
     //get last 10 message
     return axios

@@ -5,6 +5,7 @@ var fs = require("fs");
 var multer = require("multer");
 var path = require("path");
 var filedir = require("./FileDirect");
+var mysql = require("mysql");
 // var bodyParser=require('body-parser');
 
 // var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -271,6 +272,26 @@ router.post("/get-friends", (req, res) => {
 
       Promise.all(friendsInfoList).then(Friendlist => res.json({ Friendlist }));
     });
+  });
+});
+
+router.post("/search", (req, res) => {
+  const { query } = req.body.data;
+  let sql = `SELECT userName,userEmail,active FROM users WHERE userName REGEXP ? LIMIT 7`;
+
+  pool.query(sql, [`^${query}`]).then(dbresult => {
+    let peoples = dbresult.map(people => {
+      const { userName, userEmail, active } = people;
+      return {
+        userName,
+        userEmail,
+        active,
+        profilePicture: `data:image/jpg;base64,${getProfilePicture(
+          dbresult[0].userEmail
+        )}`
+      };
+    });
+    res.json({ peoples });
   });
 });
 

@@ -23,9 +23,17 @@
 
 .user-box .header .me {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex: 1 1 100%;
+}
+
+.user-box .header .find-friend {
+  text-shadow: 1px #00bfff;
+}
+
+.user-box .header .find-friend:hover {
+  cursor: pointer;
 }
 
 .user-box ul {
