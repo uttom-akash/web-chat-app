@@ -2,7 +2,7 @@ import React from "react";
 import "../css/SearchBar.css";
 export default props => {
   return (
-    <div class="search-container">
+    <div className="search-container">
       <input
         type="text"
         placeholder="Search..."
@@ -10,7 +10,7 @@ export default props => {
         value={props.query}
         onChange={props.onChange}
       />
-      <div class="search-button">
+      <div className="search-button">
         <i className="fas fa-search" />
       </div>
     </div>

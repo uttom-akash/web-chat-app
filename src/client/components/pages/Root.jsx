@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import getSocket from "../socket/Socket";
 import Show from "./Show";
+import { getDateTime } from "../util/Date";
 
 class Root extends Component {
   socket = null;
@@ -96,6 +97,15 @@ class Root extends Component {
       });
   };
 
+  onAddFriend = userEmail =>
+    axios.post("/api/add-friend", {
+      data: {
+        friendEmail: userEmail,
+        myEmail: this.state.user.userEmail,
+        date: getDateTime()
+      }
+    });
+
   onSelectFriend = friendData => {
     this.setState({
       receiver: {
@@ -128,6 +138,7 @@ class Root extends Component {
       data: { userEmail: this.state.user.userEmail }
     });
 
+  onGetSocket = () => this.socket;
   //render
   render() {
     const { user, receiver, messages } = this.state;
@@ -140,10 +151,12 @@ class Root extends Component {
         onSend={this.onSend}
         onSelectFriend={this.onSelectFriend}
         onGetFriends={this.onGetFriends}
+        onRefresh={this.onRefresh}
+        onAddFriend={this.onAddFriend}
+        onGetSocket={this.onGetSocket}
         user={user}
         receiver={receiver}
         messages={messages}
-        onRefresh={this.onRefresh}
       />
     );
   }

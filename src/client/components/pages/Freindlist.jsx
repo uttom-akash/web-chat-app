@@ -44,15 +44,20 @@ class FriendList extends Component {
   };
 
   render() {
-    const { profilePicture, onAddFriend } = this.props;
+    const { profilePicture, onAddFriend, onlogOut } = this.props;
     return (
       <section className="user-box">
         <header className="header">
           <div className="me">
             <img src={profilePicture} alt="bal" />
           </div>
-          <div className="find-friend" onClick={onAddFriend}>
-            <i className="fas fa-search" />
+          <div className="header-control">
+            <div className="find-friend" onClick={onAddFriend}>
+              <i className="fas fa-search" />
+            </div>
+            <div className="log-out" onClick={onlogOut}>
+              <i>logOut</i>
+            </div>
           </div>
         </header>
         <ul>{this.getViews()}</ul>

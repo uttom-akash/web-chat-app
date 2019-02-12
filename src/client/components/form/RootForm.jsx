@@ -105,7 +105,7 @@ class RootForm extends Component {
               zIndex: "-1"
             }}
           />
-          <label htmlFor="file">
+          <label htmlFor="file" className="btn">
             <i className="fas fa-paperclip" />
           </label>
           <textarea

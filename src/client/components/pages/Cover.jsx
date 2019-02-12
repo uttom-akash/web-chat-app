@@ -27,7 +27,7 @@ class Cover extends Component {
     return (
       <div className="Cover">
         <button className="Registerbtn" onClick={this.onViewChange}>
-          Register
+          {this.state.view ? "back" : "Register"}
         </button>
         <div className="Form">{this.getView()}</div>
       </div>

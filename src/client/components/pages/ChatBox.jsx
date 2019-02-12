@@ -48,7 +48,15 @@ class ChatBox extends Component {
   };
 
   render() {
-    const { messages, user, receiver, onSend, backward, forward } = this.props;
+    const {
+      messages,
+      user,
+      receiver,
+      onSend,
+      backward,
+      forward,
+      onGetSocket
+    } = this.props;
     return (
       <section className="chat-screen">
         <ChatBoxHeader
@@ -57,6 +65,7 @@ class ChatBox extends Component {
           receiverName={receiver.receiverName}
           backward={backward}
           forward={forward}
+          onGetSocket={onGetSocket}
         />
         <section className="messages">
           <AutoSizer>

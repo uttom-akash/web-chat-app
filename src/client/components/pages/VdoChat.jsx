@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import getSocket from "../socket/Socket";
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from "reactstrap";
 
 class Vdo extends Component {
@@ -14,6 +13,7 @@ class Vdo extends Component {
     this.peer2peer = null;
     this.localvdoref = React.createRef();
     this.remotevdoref = React.createRef();
+    this.socket = props.onGetSocket();
   }
 
   onToggle = () => this.setState({ isOpen: !this.state.isOpen });
@@ -23,7 +23,7 @@ class Vdo extends Component {
     this.onToggle();
 
     //socket init
-    this.socket = await getSocket(this.props.receiver, this.props.sender);
+    //this.socket = await getSocket(this.props.receiver, this.props.sender);
     this.onListen();
     //const media=navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkit
     navigator.mediaDevices

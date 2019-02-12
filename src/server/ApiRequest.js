@@ -287,13 +287,34 @@ router.post("/search", (req, res) => {
         userEmail,
         active,
         profilePicture: `data:image/jpg;base64,${getProfilePicture(
-          dbresult[0].userEmail
+          people.userEmail
         )}`
       };
     });
     res.json({ peoples });
   });
 });
+
+router.post("/add-friend", (req, res) => {
+  const { friendEmail, myEmail, date } = req.body.data;
+  const room = roomName(friendEmail, myEmail);
+  dbMakeRoom(room).then(roomId =>
+    dbGetUid(friendEmail).then(friendUid =>
+      dbGetUid(myEmail).then(myUid => {
+        let sql = `INSERT INTO friends(firstId,secondId,roomId,date) VALUES(?,?,?,?)`;
+        pool
+          .query(sql, [myUid, friendUid, roomId, date])
+          .then(dbresult => res.json({ status: true }))
+          .catch(dbresult => res.json({ status: false }));
+      })
+    )
+  );
+});
+
+const dbMakeRoom = room => {
+  let sql = `INSERT INTO rooms(room) VALUES(?)`;
+  return pool.query(sql, [room]).then(dbresult => dbresult.insertId);
+};
 
 const dbGetlastMessage = roomId => {
   let sql = `SELECT message,messageType,date,seen FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 1`;

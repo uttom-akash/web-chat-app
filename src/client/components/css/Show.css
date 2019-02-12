@@ -1,4 +1,13 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto");
+:root {
+  --color1: black;
+  --color2: rgb(25, 25, 26);
+  --color3: rgb(169, 175, 182);
+  --color4: rgb(150, 216, 18);
+  --color5: rgb(139, 12, 12);
+  --color6: rgb(92, 92, 94);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -11,26 +20,26 @@
   font-family: "Roboto", sans-serif;
   font-weight: 500;
   font-size: 14px;
-  color: #00bfff;
+  color: var(--color3);
 
-  background-color: #00bfff;
+  background-color: var(--color3);
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
 .app-screen {
-  width: 40%;
+  width: 800px;
   height: 100%;
-  background-color: rgb(25, 25, 26);
-  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem rgb(71, 71, 73);
+  background-color: var(--color2);
+  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
   .app-screen {
     width: 100%;
     height: 100%;
-    background-color: rgb(25, 25, 26);
-    box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem rgb(71, 71, 73);
+    background-color: var(--color2);
+    box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
   }
 }

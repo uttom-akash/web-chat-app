@@ -6,7 +6,14 @@ import "../css/ChatBoxHeader.css";
 class ChatBoxHeader extends Component {
   state = {};
   render() {
-    const { sender, receiver, receiverName, forward, backward } = this.props;
+    const {
+      sender,
+      receiver,
+      receiverName,
+      forward,
+      backward,
+      onGetSocket
+    } = this.props;
 
     return (
       <section className="menu-bar">
@@ -24,6 +31,7 @@ class ChatBoxHeader extends Component {
         <Vdo
           sender={sender}
           receiver={receiver}
+          onGetSocket={onGetSocket}
           audio={true}
           video={false}
           btn="fa fa-phone"
@@ -31,6 +39,7 @@ class ChatBoxHeader extends Component {
         <Vdo
           sender={sender}
           receiver={receiver}
+          onGetSocket={onGetSocket}
           audio={true}
           video={true}
           btn="fa fa-video-camera"

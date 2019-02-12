@@ -39,8 +39,17 @@ class Show extends Component {
     });
   };
 
-  onAddFriend = () => {
+  onAddFriendScreen = () => {
     this.setState({ currentDisplay: "Add-friend" });
+  };
+
+  onAddFriend = userEmail => {
+    return this.props.onAddFriend(userEmail);
+  };
+
+  onlogOut = () => {
+    sessionStorage.removeItem("userEmail");
+    this.ChangeDisplayBackward();
   };
 
   ChangeDisplayForward = () => {
@@ -71,6 +80,9 @@ class Show extends Component {
       case "Download":
         this.setState({ currentDisplay: "Chat-box" });
         return;
+      case "Friend-list":
+        this.setState({ currentDisplay: "Cover" });
+        return;
       default:
         return;
     }
@@ -78,7 +90,14 @@ class Show extends Component {
 
   showDisplay = () => {
     const { currentDisplay } = this.state;
-    const { user, receiver, messages, onSend, onGetFriends } = this.props;
+    const {
+      user,
+      receiver,
+      messages,
+      onSend,
+      onGetFriends,
+      onGetSocket
+    } = this.props;
 
     switch (currentDisplay) {
       case "Cover":
@@ -89,12 +108,18 @@ class Show extends Component {
             onSelectFriend={this.onSelectFriend}
             forward={this.ChangeDisplayForward}
             onGetFriends={onGetFriends}
+            onAddFriend={this.onAddFriendScreen}
+            onlogOut={this.onlogOut}
             profilePicture={user.userProfilePicture}
-            onAddFriend={this.onAddFriend}
           />
         );
       case "Add-friend":
-        return <FindNewFriend />;
+        return (
+          <FindNewFriend
+            backward={this.ChangeDisplayBackward}
+            onAddFriend={this.onAddFriend}
+          />
+        );
       case "Chat-box":
         return (
           <ChatBox
@@ -104,6 +129,7 @@ class Show extends Component {
             onSend={onSend}
             forward={this.ChangeDisplayForward}
             backward={this.ChangeDisplayBackward}
+            onGetSocket={onGetSocket}
           />
         );
       case "Download":

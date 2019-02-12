@@ -11,15 +11,15 @@
   align-self: flex-end;
   margin: 5px;
   padding: 2px 12px 2px 12px;
-  border: 0.5px solid #00bfff;
+  border: 0.5px solid var(--color1);
   border-radius: 7px;
-  background-color: rgb(25, 25, 26);
-  color: #00bfff;
+  background-color: var(--color2);
+  color: var(--color3);
 }
 
 .Cover .Registerbtn:hover {
-  color: rgb(25, 25, 26);
-  background-color: #00bfff;
+  color: var(--color2);
+  background-color: var(--color3);
 }
 
 .Form {

@@ -54,8 +54,7 @@ class RegisterForm extends Component {
   render() {
     const { userName, userEmail, password, profilePicture } = this.state;
     return (
-      <div>
-        <label className="failed">Your Credentials is not valid..</label>
+      <React.Fragment>
         <form onSubmit={this.onSubmit} className="form">
           <img src={profilePicture} alt="user-pro-pic" className="pro-pic" />
           <input
@@ -94,7 +93,7 @@ class RegisterForm extends Component {
           />
           <button className="btn">Register</button>
         </form>
-      </div>
+      </React.Fragment>
     );
   }
 }

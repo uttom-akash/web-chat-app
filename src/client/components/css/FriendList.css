@@ -4,20 +4,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgb(25, 25, 26);
 }
 
 .user-box .header {
   display: flex;
+  justify-content: space-between;
   width: 90%;
   padding: 1.5rem;
-  border-bottom: 1px solid rgb(81, 83, 85);
+  border-bottom: 1px solid var(--color1);
 }
 
 .user-box .header .me img {
   width: 5.5rem;
   height: 5.5rem;
-  border: 2px solid #00bfff;
+  border: 2px solid var(--color1);
   border-radius: 50%;
 }
 
@@ -25,15 +25,38 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  flex: 1 1 100%;
 }
 
 .user-box .header .find-friend {
-  text-shadow: 1px #00bfff;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--color1);
+  text-shadow: 1px var(--color3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 500ms ease;
 }
 
+.header-control {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.log-out {
+  padding: 2px;
+  border-bottom: 0.1px solid var(--color1);
+}
+.log-out:hover {
+  cursor: pointer;
+  border-bottom: 0.1px solid var(--color4);
+}
 .user-box .header .find-friend:hover {
   cursor: pointer;
+  color: var(--color4);
+  transform: rotate(360deg);
 }
 
 .user-box ul {
@@ -45,7 +68,7 @@
 
 .user-box ul li {
   list-style-type: none;
-  border-bottom: 1px solid rgb(40, 40, 41);
+  border-bottom: 0.1px solid var(--color1);
 }
 
 .user-box ul li .list {
@@ -56,9 +79,12 @@
 
 .user-box ul li:hover {
   cursor: pointer;
-  border-bottom: 1px solid #00bfff;
+  border-right: 0.1px solid var(--color4);
 }
 
+.user-box ul li:focus {
+  outline: none;
+}
 .avatar {
   display: flex;
   margin: auto 0;
@@ -73,24 +99,21 @@
 }
 
 .avatar .active {
-  border: 2px solid #00bfff;
+  border: 2px solid var(--color1);
 }
 
-.avatar .inactive {
-  border: 2px solid rgb(160, 16, 16);
-}
 .avatar .online,
 .offline {
   width: 1rem;
   height: 1rem;
-  background-color: #00bfff;
+  background-color: var(--color4);
   border-radius: 50%;
   position: absolute;
   left: 4rem;
 }
 
 .avatar .offline {
-  background-color: rgb(160, 16, 16);
+  background-color: var(--color5);
 }
 
 .users-list {
@@ -101,7 +124,7 @@
 }
 
 .username {
-  color: #00bfff;
+  color: var(--color3);
   margin: 0;
   padding: 0;
 }
@@ -109,12 +132,13 @@
 .text {
   font-size: 0.7rem;
   font-style: italic;
-  color: rgb(130, 131, 133);
+  color: var(--color3);
   margin: auto 0;
 }
 
 .timestamp {
   font-size: 0.7rem;
+  color: var(--color6);
   flex-grow: 0.5;
   margin: auto 0;
 }
