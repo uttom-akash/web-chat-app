@@ -218,14 +218,20 @@ router.post("/login", (req, res) => {
   pool
     .query(sql, [userEmail, password])
     .then(dbresult => {
-      const { userName, active, date } = dbresult[0];
-      res.json({
-        userName,
-        userEmail,
-        active,
-        date,
-        profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
-      });
+      if (dbresult.length) {
+        const { userName, active, date } = dbresult[0];
+        res.json({
+          userName,
+          userEmail,
+          active,
+          date,
+          profilePicture: `data:image/jpg;base64,${getProfilePicture(
+            userEmail
+          )}`
+        });
+      } else {
+        res.status(400).json({ error: "Credentials is not valid" });
+      }
     })
     .catch(err => console.log(err));
 });
@@ -237,14 +243,20 @@ router.post("/current-user", (req, res) => {
   pool
     .query(sql, [userEmail])
     .then(dbresult => {
-      const { userName, active, date } = dbresult[0];
-      res.json({
-        userName,
-        userEmail,
-        active,
-        date,
-        profilePicture: `data:image/jpg;base64,${getProfilePicture(userEmail)}`
-      });
+      if (dbresult.length) {
+        const { userName, active, date } = dbresult[0];
+        res.json({
+          userName,
+          userEmail,
+          active,
+          date,
+          profilePicture: `data:image/jpg;base64,${getProfilePicture(
+            userEmail
+          )}`
+        });
+      } else {
+        res.status(400).json({ error: "user not found" });
+      }
     })
     .catch(err => res.status(400).json({ error: "user not found" }));
 });

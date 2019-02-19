@@ -114,6 +114,7 @@ class Root extends Component {
         receiverProfilePicture: friendData.profilePicture
       }
     });
+
     const receiver = friendData.userEmail;
     const sender = this.state.user.userEmail;
     if (this.socket) this.socket.close();

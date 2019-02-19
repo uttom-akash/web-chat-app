@@ -1,9 +1,9 @@
 .chat-screen {
+  background-color: blueviolet;
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .messages {
@@ -13,6 +13,10 @@
   background-color: var(--color2);
   overflow-x: hidden;
   flex-grow: 2;
+}
+
+.write-area {
+  align-self: flex-end;
 }
 
 ::-webkit-scrollbar {

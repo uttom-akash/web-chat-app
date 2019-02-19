@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Credentials from "../form/Credentials";
+import Login from "../form/Login";
 import "../css/Cover.css";
 import RegisterForm from "../form/RegisterForm";
 
@@ -17,7 +17,7 @@ class Cover extends Component {
     const View = view ? (
       <RegisterForm onRegister={onRegister} />
     ) : (
-      <Credentials onLogin={onLogin} />
+      <Login onLogin={onLogin} />
     );
 
     return View;

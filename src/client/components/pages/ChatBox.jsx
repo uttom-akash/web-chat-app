@@ -1,64 +1,54 @@
 import React, { Component } from "react";
-import RootForm from "../form/RootForm";
 import ChatBoxHeader from "./ChatBoxHeader";
+import TextChat from "./TextChat";
+import VideoAudio from "./VideoAudioChat";
 
-import "../css/Chatbox.css";
-import {
-  List,
-  AutoSizer,
-  CellMeasurer,
-  CellMeasurerCache
-} from "react-virtualized";
-import SingleMessage from "./Message";
-class ChatBox extends Component {
-  cache = new CellMeasurerCache({
-    fixedWidth: true,
-    defaultHeight: 100
-  });
+class Chat extends Component {
+  state = {
+    text: true,
+    audio: false,
+    video: false
+  };
+  onText = () => this.setState({ text: true, audio: false, video: false });
+  onAudio = () => this.setState({ text: false, audio: true, video: false });
+  onVideo = () => this.setState({ text: false, audio: true, video: true });
 
-  rowRenderer = ({ index, key, parent, style }) => {
-    const { user, receiver, messages } = this.props;
-    const msg = messages[index];
+  getView = () => {
+    const { messages, user, receiver, onSend, onGetSocket } = this.props;
+    const { text, audio, video } = this.state;
 
-    return (
-      <CellMeasurer
-        key={key}
-        cache={this.cache}
-        parent={parent}
-        columnIndex={0}
-        rowIndex={index}
-      >
-        <div style={style}>
-          {user.userEmail === msg.sender ? (
-            <SingleMessage
-              msg={msg}
-              owner={user.userProfilePicture}
-              me={true}
-            />
-          ) : (
-            <SingleMessage
-              msg={msg}
-              owner={receiver.receiverProfilePicture}
-              me={false}
-            />
-          )}
-        </div>
-      </CellMeasurer>
-    );
+    switch (text) {
+      case true:
+        return (
+          <TextChat
+            user={user}
+            receiver={receiver}
+            messages={messages}
+            onSend={onSend}
+          />
+        );
+      case false:
+        return (
+          <VideoAudio
+            sender={user.userEmail}
+            receiver={receiver.receiverEmail}
+            onGetSocket={onGetSocket}
+            audio={audio}
+            video={video}
+            onText={this.onText}
+          />
+        );
+      default:
+        return <div />;
+    }
   };
 
   render() {
-    const {
-      messages,
-      user,
-      receiver,
-      onSend,
-      backward,
-      forward,
-      onGetSocket
-    } = this.props;
+    const { user, receiver, backward, forward, onGetSocket } = this.props;
     return (
-      <section className="chat-screen">
+      <div
+        style={{ height: `${100}%`, display: "flex", flexDirection: "column" }}
+      >
         <ChatBoxHeader
           sender={user.userEmail}
           receiver={receiver.receiverEmail}
@@ -66,27 +56,12 @@ class ChatBox extends Component {
           backward={backward}
           forward={forward}
           onGetSocket={onGetSocket}
+          onAudio={this.onAudio}
+          onVideo={this.onVideo}
         />
-        <section className="messages">
-          <AutoSizer>
-            {({ height, width }) => (
-              <List
-                scrollToIndex={messages.length - 1}
-                height={height}
-                rowCount={messages.length}
-                deferredMeasurementCache={this.cache}
-                rowHeight={this.cache.rowHeight}
-                rowRenderer={this.rowRenderer}
-                width={width}
-                overscanRowCount={5}
-              />
-            )}
-          </AutoSizer>
-        </section>
-        <RootForm onSend={onSend} />
-      </section>
+        {this.getView()}
+      </div>
     );
   }
 }
-
-export default ChatBox;
+export default Chat;

@@ -1,16 +1,22 @@
 import React, { Component } from "react";
 import "../css/FriendList.css";
+import { Spinner } from "reactstrap";
 
 class FriendList extends Component {
   state = {
-    friendlist: []
+    friendlist: [],
+    loading: false
   };
 
   componentDidMount = () => {
+    this.setState({ loading: true });
     this.props
       .onGetFriends()
-      .then(res => this.setState({ friendlist: res.data.Friendlist }))
-      .catch(err => console.log(err));
+      .then(res => {
+        this.setState({ loading: false });
+        this.setState({ friendlist: res.data.Friendlist });
+      })
+      .catch(err => this.setState({ loading: false }));
   };
 
   getViews = () => {
@@ -44,7 +50,7 @@ class FriendList extends Component {
   };
 
   render() {
-    const { profilePicture, onAddFriend, onlogOut } = this.props;
+    const { profilePicture, onFriendSearch, onlogOut } = this.props;
     return (
       <section className="user-box">
         <header className="header">
@@ -52,7 +58,7 @@ class FriendList extends Component {
             <img src={profilePicture} alt="bal" />
           </div>
           <div className="header-control">
-            <div className="find-friend" onClick={onAddFriend}>
+            <div className="find-friend" onClick={onFriendSearch}>
               <i className="fas fa-search" />
             </div>
             <div className="log-out" onClick={onlogOut}>
@@ -60,7 +66,11 @@ class FriendList extends Component {
             </div>
           </div>
         </header>
-        <ul>{this.getViews()}</ul>
+        {this.state.loading ? (
+          <Spinner type="grow" className="spinner" />
+        ) : (
+          <ul>{this.getViews()}</ul>
+        )}
       </section>
     );
   }

@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from "reactstrap";
+import "../css/VdoChat.css";
 
-class Vdo extends Component {
+class VideoAudioChat extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isOpen: false
+      isOpen: false,
+      offer: false
     };
 
     this.localstream = null;
@@ -16,6 +17,7 @@ class Vdo extends Component {
     this.socket = props.onGetSocket();
   }
 
+  componentDidMount = () => this.onStart();
   onToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   onStart = async () => {
@@ -25,7 +27,7 @@ class Vdo extends Component {
     //socket init
     //this.socket = await getSocket(this.props.receiver, this.props.sender);
     this.onListen();
-    //const media=navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkit
+    //const media=navigator.mediaDevices.getUserMedia ||
     navigator.mediaDevices
       .getUserMedia({ video: this.props.video, audio: this.props.audio })
       .then(stream => {
@@ -68,6 +70,7 @@ class Vdo extends Component {
 
   onLeave = () => {
     this.onToggle();
+    this.props.onText();
     //this.handleLeave();
     this.socket.emit("leave", "leaveing");
   };
@@ -81,6 +84,7 @@ class Vdo extends Component {
   };
 
   handleOffer = offer => {
+    this.setState({ offer: true });
     this.peer2peer.setRemoteDescription(new RTCSessionDescription(offer));
     //create an answer to an offer
     this.peer2peer
@@ -103,60 +107,45 @@ class Vdo extends Component {
   };
 
   handleLeave = () => {
-    console.log("leave in");
+    this.onLeave();
     this.localstream.getTracks().forEach(track => track.stop());
     this.peer2peer.close();
     this.peer2peer.onicecandidate = null;
     this.peer2peer.onaddstream = null;
   };
 
+  getView = () => {
+    return (
+      <div className="modal-container">
+        <div className="modal-btn">
+          <button onClick={this.onCall} className="call-btn">
+            call
+          </button>
+          <button onClick={this.onLeave} className="hangup-btn">
+            hangup
+          </button>
+        </div>
+        <video
+          ref={this.localvdoref}
+          id="local"
+          autoPlay
+          className="local-video"
+        />
+        <video
+          ref={this.remotevdoref}
+          id="remote"
+          autoPlay
+          className="remote-video"
+        />
+      </div>
+    );
+  };
+
   render() {
     return (
-      <div className="d-inline">
-        {/* <Button outline color="success" onClick={this.onStart}>
-          {this.props.btn}
-        </Button> */}
-        <div onClick={this.onStart} className="btn">
-          <i className={this.props.btn} />
-        </div>
-        <Modal
-          isOpen={this.state.isOpen}
-          fade={true}
-          style={{ width: "900px" }}
-          centered
-        >
-          <ModalHeader />
-          <ModalBody>
-            <video
-              ref={this.localvdoref}
-              id="local"
-              autoPlay
-              controls
-              width="320"
-              height="240"
-            />
-            <video
-              ref={this.remotevdoref}
-              id="remote"
-              autoPlay
-              controls
-              width="770"
-              height="600"
-              style={{ maxWidth: `${100}%`, height: "auto" }}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button color="success" onClick={this.onCall}>
-              call
-            </Button>
-            <Button color="danger" onClick={this.onLeave}>
-              hangup
-            </Button>
-          </ModalFooter>
-        </Modal>
-      </div>
+      <React.Fragment>{this.state.isOpen && this.getView()}</React.Fragment>
     );
   }
 }
 
-export default Vdo;
+export default VideoAudioChat;

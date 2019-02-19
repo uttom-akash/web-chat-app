@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import Vdo from "./VdoChat";
 import Upload from "../form/UploadForm";
 import "../css/ChatBoxHeader.css";
 
@@ -12,7 +11,9 @@ class ChatBoxHeader extends Component {
       receiverName,
       forward,
       backward,
-      onGetSocket
+      onVideo,
+      onAudio,
+      disabled
     } = this.props;
 
     return (
@@ -28,22 +29,12 @@ class ChatBoxHeader extends Component {
         <div className="btn" onClick={forward}>
           <i className="fa fa-download" />
         </div>
-        <Vdo
-          sender={sender}
-          receiver={receiver}
-          onGetSocket={onGetSocket}
-          audio={true}
-          video={false}
-          btn="fa fa-phone"
-        />
-        <Vdo
-          sender={sender}
-          receiver={receiver}
-          onGetSocket={onGetSocket}
-          audio={true}
-          video={true}
-          btn="fa fa-video-camera"
-        />
+        <div className="btn" onClick={onAudio}>
+          <i className="fa fa-phone" />
+        </div>
+        <div className="btn" onClick={onVideo}>
+          <i className="fa fa-video-camera" />
+        </div>
       </section>
     );
   }

@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import "../css/Credentials.css";
 import validator from "validator";
+import { Spinner } from "reactstrap";
 
-class Credentials extends Component {
+class Login extends Component {
   state = {
     userEmail: "",
-    password: ""
+    password: "",
+    error: {},
+    loading: false
   };
 
   onChange = ev => this.setState({ [ev.target.name]: ev.target.value });
@@ -14,13 +17,16 @@ class Credentials extends Component {
     ev.preventDefault();
     const { userEmail, password } = this.state;
 
-    const error = this.onValidate();
+    let error = {};
+    error = this.onValidate();
     this.setState({ error });
     if (Object.keys(error).length === 0) {
-      this.props
-        .onLogin({ userEmail, password })
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err.response.data.error));
+      this.setState({ loading: true });
+      this.props.onLogin({ userEmail, password }).catch(err => {
+        error.global = err.response.data.error;
+        this.setState({ error });
+        this.setState({ loading: false });
+      });
     }
   };
 
@@ -33,16 +39,23 @@ class Credentials extends Component {
     return error;
   };
 
-  render() {
+  getView = () => {
     const { userEmail, password } = this.state;
+
     return (
       <form onSubmit={this.onSubmit} className="form">
+        {this.state.error.global && (
+          <div className="error">
+            <label>{this.state.error.global}</label>
+          </div>
+        )}
         <input
           type="email"
           name="userEmail"
           value={userEmail}
           onChange={this.onChange}
           placeholder="email"
+          className={`${!!this.state.error.userEmail}`}
         />
         <input
           type="password"
@@ -50,11 +63,24 @@ class Credentials extends Component {
           value={password}
           onChange={this.onChange}
           placeholder="password"
+          className={`${!!this.state.error.password}`}
         />
         <button className="btn">Login</button>
       </form>
     );
+  };
+
+  render() {
+    return (
+      <React.Fragment>
+        {this.state.loading ? (
+          <Spinner type="grow" className="spinner" />
+        ) : (
+          this.getView()
+        )}
+      </React.Fragment>
+    );
   }
 }
 
-export default Credentials;
+export default Login;

@@ -5,41 +5,46 @@ import Cover from "./Cover";
 import "../css/Show.css";
 import Download from "./Download";
 import FindNewFriend from "./FindNewFriend";
+import { Spinner } from "reactstrap";
+
 class Show extends Component {
   state = {
-    currentDisplay: "Cover"
+    currentDisplay: "Cover",
+    loading: false
   };
 
   componentDidMount = () => {
     const userEmail = sessionStorage.userEmail;
     if (userEmail) {
-      this.props.onRefresh(userEmail).then(res => {
-        this.setState({ currentDisplay: "Friend-list" });
-      });
+      this.setState({ loading: true });
+      this.props
+        .onRefresh(userEmail)
+        .then(res => {
+          this.setState({ currentDisplay: "Friend-list" });
+          this.setState({ loading: false });
+        })
+        .catch(err => this.setState({ loading: false }));
     }
+  };
+
+  onRegister = RegisterData => {
+    return this.props.onRegister(RegisterData).then(res => {
+      this.ChangeDisplayForward();
+    });
   };
 
   onLogin = loginData => {
     return this.props.onLogin(loginData).then(res => {
       this.ChangeDisplayForward();
-
-      return res;
     });
   };
 
   onSelectFriend = friendData => {
-    this.props
-      .onSelectFriend(friendData)
-      .then(res => this.ChangeDisplayForward());
-  };
-  onRegister = RegisterData => {
-    return this.props.onRegister(RegisterData).then(res => {
-      this.ChangeDisplayForward();
-      return res;
-    });
+    this.ChangeDisplayForward();
+    this.props.onSelectFriend(friendData);
   };
 
-  onAddFriendScreen = () => {
+  onFriendSearch = () => {
     this.setState({ currentDisplay: "Add-friend" });
   };
 
@@ -108,7 +113,7 @@ class Show extends Component {
             onSelectFriend={this.onSelectFriend}
             forward={this.ChangeDisplayForward}
             onGetFriends={onGetFriends}
-            onAddFriend={this.onAddFriendScreen}
+            onFriendSearch={this.onFriendSearch}
             onlogOut={this.onlogOut}
             profilePicture={user.userProfilePicture}
           />
@@ -148,7 +153,13 @@ class Show extends Component {
   render() {
     return (
       <div className="full-screen">
-        <section className="app-screen">{this.showDisplay()}</section>
+        <section className="app-screen">
+          {this.state.loading ? (
+            <Spinner type="grow" className="spinner" />
+          ) : (
+            this.showDisplay()
+          )}
+        </section>
       </div>
     );
   }

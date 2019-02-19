@@ -1,0 +1,67 @@
+.modal-container {
+  width: 800px;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  background-color: var(--color2);
+  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
+  position: relative;
+}
+
+@media screen and (max-width: 800px) {
+  .modal-container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    background-color: var(--color2);
+    box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
+  }
+}
+
+.modal-container .remote-video {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.modal-container .local-video {
+  padding: 0;
+  margin: 0;
+  margin-top: 1.7rem;
+  width: 9rem;
+  position: absolute;
+  z-index: 2;
+  border-radius: 3px;
+}
+
+.modal-container .modal-btn {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-btn .call-btn,
+.hangup-btn {
+  padding: 2px 10px 2px 10px;
+  border: 1px solid var(--color1);
+  background-color: var(--color2);
+  color: var(--color3);
+}
+
+.modal-btn .call-btn:hover {
+  border-color: var(--color4);
+  color: var(--color4);
+}
+
+.modal-btn .hangup-btn:hover {
+  border-color: var(--color5);
+  color: var(--color5);
+}

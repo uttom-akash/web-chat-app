@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "../css/Credentials.css";
 import validator from "validator";
+import { Spinner } from "reactstrap";
 
 class RegisterForm extends Component {
   state = {
@@ -8,12 +9,8 @@ class RegisterForm extends Component {
     userEmail: "",
     password: "",
     profilePicture: null,
-    error: {
-      userName: "",
-      userEmail: "",
-      password: ""
-    },
-    next: ""
+    error: {},
+    loading: false
   };
   onFileChange = ev => {
     const pro = ev.target.files[0];
@@ -27,15 +24,21 @@ class RegisterForm extends Component {
   onSubmit = ev => {
     ev.preventDefault();
     const { userName, userEmail, password, profilePicture } = this.state;
-    const error = this.onValidate();
+    let error = {};
+    error = this.onValidate();
     this.setState({ error });
+
     console.log(Object.keys(error));
 
     if (Object.keys(error).length === 0) {
+      this.setState({ loading: true });
       this.props
         .onRegister({ userName, userEmail, password, profilePicture })
-        .then(res => console.log(res.data))
-        .catch(err => console.log(err.response.data.error));
+        .catch(err => {
+          this.setState({ loading: false });
+          error.global = err.response.data.error;
+          this.setState({ error });
+        });
     }
   };
 
@@ -49,50 +52,64 @@ class RegisterForm extends Component {
     return error;
   };
 
-  View = () => {};
+  getView = () => {
+    const { userName, userEmail, password, profilePicture } = this.state;
+
+    return (
+      <form onSubmit={this.onSubmit} className="form">
+        <img src={profilePicture} alt="user-pro-pic" className="pro-pic" />
+        <input
+          type="file"
+          name="pro-pic"
+          onChange={this.onFileChange}
+          className="pro-file"
+          id="pic"
+        />
+        <label htmlFor="pic">photo</label>
+
+        <input
+          type="text"
+          name="userName"
+          value={userName}
+          onChange={this.onChange}
+          placeholder="user-name"
+          className={`${!!this.state.error.userName}`}
+        />
+
+        <input
+          type="email"
+          name="userEmail"
+          value={userEmail}
+          onChange={this.onChange}
+          placeholder="email"
+          className={`${!!this.state.error.userEmail}`}
+        />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          onChange={this.onChange}
+          placeholder="password"
+          className={`${!!this.state.error.password}`}
+        />
+        <button className="btn">Register</button>
+        {this.state.error.global && (
+          <div className="error">
+            <label>{this.state.error.global}</label>
+          </div>
+        )}
+      </form>
+    );
+  };
 
   render() {
-    const { userName, userEmail, password, profilePicture } = this.state;
     return (
       <React.Fragment>
-        <form onSubmit={this.onSubmit} className="form">
-          <img src={profilePicture} alt="user-pro-pic" className="pro-pic" />
-          <input
-            type="file"
-            name="pro-pic"
-            onChange={this.onFileChange}
-            className="pro-file"
-            id="pic"
-          />
-          <label htmlFor="pic">photo</label>
-
-          <input
-            type="text"
-            name="userName"
-            value={userName}
-            onChange={this.onChange}
-            placeholder="user-name"
-            className={`${!!this.state.error.userName}`}
-          />
-
-          <input
-            type="email"
-            name="userEmail"
-            value={userEmail}
-            onChange={this.onChange}
-            placeholder="email"
-            className={`${!!this.state.error.userEmail}`}
-          />
-          <input
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.onChange}
-            placeholder="password"
-            className={`${!!this.state.error.password}`}
-          />
-          <button className="btn">Register</button>
-        </form>
+        {this.state.loading ? (
+          <Spinner type="grow" className="spinner" />
+        ) : (
+          this.getView()
+        )}
       </React.Fragment>
     );
   }
