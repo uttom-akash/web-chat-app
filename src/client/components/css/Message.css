@@ -9,7 +9,7 @@
   margin: 0.5rem;
   width: 3rem;
   height: 3rem;
-  border: 0.1rem solid var(--color1);
+  border: 0.1rem solid var(--hover);
   border-radius: 50%;
 }
 
@@ -33,13 +33,13 @@
 }
 
 .left .msg {
-  background-color: var(--color3);
-  color: var(--color2);
+  background-color: var(--hover);
+  color: var(--app-screen);
 }
 
 .right .msg {
-  border: 1px solid var(--color3);
-  color: var(--color3);
+  border: 1px solid var(--hover);
+  color: var(--font-color);
 }
 
 .messages article video {

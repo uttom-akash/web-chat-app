@@ -10,6 +10,8 @@ class Root extends Component {
     super(props);
     this.state = {
       messages: [],
+      friendlist: [],
+      notifications: null,
       receiver: {
         receiverName: "",
         receiverEmail: "",
@@ -21,14 +23,74 @@ class Root extends Component {
         userProfilePicture: ""
       }
     };
-
+    this.timer = 10 * 1000;
     this.listRef = React.createRef();
   }
+
+  componentDidMount = () => {
+    this.Interval = setInterval(() => this.onGetFriends(), this.timer);
+  };
+
+  componentWillMount = () => {
+    clearInterval(this.timer);
+  };
+
+  onSort = list => {
+    list.sort((a, b) => {
+      let x = a.profile.userName.toLowerCase();
+      let y = b.profile.userName.toLowerCase();
+      return x < y ? -1 : 1;
+    });
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    let prevFriendList = prevState.friendlist;
+    let currFriendList = this.state.friendlist;
+
+    if (
+      prevFriendList !== currFriendList &&
+      prevFriendList.length === currFriendList.length
+    ) {
+      this.onSort(prevFriendList);
+      this.onSort(currFriendList);
+
+      let length = prevFriendList.length;
+
+      for (let index = 0; index < length; index++) {
+        if (
+          currFriendList[index].messages.senderEmail !==
+            this.state.user.userEmail &&
+          prevFriendList[index].messages.message !==
+            currFriendList[index].messages.message
+        ) {
+          let notifications = {};
+          notifications.userName = currFriendList[index].profile.userName;
+          notifications.message = currFriendList[index].messages.message;
+
+          this.setState({ notifications });
+          clearTimeout(this.notfy);
+          this.notfy = setTimeout(
+            () => this.setState({ notifications: null }),
+            10 * 1000
+          );
+        }
+      }
+    }
+  };
 
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
-    this.socket.on("responseMessage", msg => this.addMessage(msg, "socket"));
+    this.onListen();
+  };
+
+  onListen = () => {
+    this.socket.on("responseMessage", msg => {
+      this.addMessage(msg, "socket");
+      this.socket.emit("received", "received");
+    });
+
+    this.socket.on("status", msg => console.log(msg));
   };
 
   //adding message
@@ -43,15 +105,13 @@ class Root extends Component {
 
   onSend = data => {
     const messageObject = data;
-    messageObject.sender = this.state.user.userEmail;
-    messageObject.receiver = this.state.receiver.receiverEmail;
+    messageObject.senderEmail = this.state.user.userEmail;
+    messageObject.receiverEmail = this.state.receiver.receiverEmail;
     this.socket.emit("requestMessage", messageObject);
-
     this.addMessage(messageObject, "user");
-
-    axios
-      .post("/api/save-message", { data: messageObject })
-      .catch(error => console.log(error));
+    // axios
+    //   .post("/api/save-message", { data: messageObject })
+    //   .catch(error => console.log(error));
   };
 
   onRegister = RegisterData => {
@@ -135,30 +195,38 @@ class Root extends Component {
   };
 
   onGetFriends = () =>
-    axios.post("/api/get-friends", {
-      data: { userEmail: this.state.user.userEmail }
-    });
+    axios
+      .post("/api/get-friends", {
+        data: { userEmail: this.state.user.userEmail }
+      })
+      .then(res => {
+        this.setState({ friendlist: res.data.Friendlist });
+        return res;
+      });
 
   onGetSocket = () => this.socket;
   //render
   render() {
-    const { user, receiver, messages } = this.state;
-    console.log(messages);
+    const { user, receiver, messages, friendlist, notifications } = this.state;
 
     return (
-      <Show
-        onLogin={this.onLogin}
-        onRegister={this.onRegister}
-        onSend={this.onSend}
-        onSelectFriend={this.onSelectFriend}
-        onGetFriends={this.onGetFriends}
-        onRefresh={this.onRefresh}
-        onAddFriend={this.onAddFriend}
-        onGetSocket={this.onGetSocket}
-        user={user}
-        receiver={receiver}
-        messages={messages}
-      />
+      <div>
+        <Show
+          onLogin={this.onLogin}
+          onRegister={this.onRegister}
+          onSend={this.onSend}
+          onSelectFriend={this.onSelectFriend}
+          onGetFriends={this.onGetFriends}
+          onRefresh={this.onRefresh}
+          onAddFriend={this.onAddFriend}
+          onGetSocket={this.onGetSocket}
+          user={user}
+          receiver={receiver}
+          messages={messages}
+          friendlist={friendlist}
+          notifications={notifications}
+        />
+      </div>
     );
   }
 }

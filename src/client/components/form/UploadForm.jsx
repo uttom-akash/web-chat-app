@@ -16,7 +16,6 @@ class Upload extends Component {
     fd.append("sender", sender);
     fd.append("receiver", receiver);
     fd.append("date", getDateTime());
-
     this.setState({ total: filePicker.size });
 
     axios.post("/api/upload", fd, {
@@ -27,6 +26,7 @@ class Upload extends Component {
 
   render() {
     const { loaded, total } = this.state;
+    console.log(loaded);
 
     return (
       <div>

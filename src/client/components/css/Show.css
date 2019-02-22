@@ -1,11 +1,23 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
 :root {
-  --color1: black;
-  --color2: rgb(25, 25, 26);
-  --color3: rgb(169, 175, 182);
-  --color4: rgb(150, 216, 18);
-  --color5: rgb(139, 12, 12);
-  --color6: rgb(92, 92, 94);
+  --full-screen: #e4ebef;
+  --app-screen: #f2f5f8;
+  --app-screen-deeper: #e6f5fc;
+  --header: #e6f5fc;
+  --header-font-color: #26231f;
+  --font-color: #4a575e;
+  --muted-font-color: #73797c;
+  --line: #c7d4da;
+  --img-border: #c7d4da;
+  --border: #f2f5f8;
+  --border-fixed: #2eb5f0;
+  --highlight: #2eb5f0;
+  --hover: #2eb5f0;
+  --unhover: #f2f5f8;
+  --error: #ff386c;
+  --shadow: #b9d2dd;
+  --active: rgb(24, 218, 153);
+  --in-active: #ff386c;
 }
 
 * {
@@ -17,12 +29,12 @@
 .full-screen {
   width: 100vw;
   height: 100vh;
-  font-family: "Roboto", sans-serif;
+  font-family: "Open Sans", sans-serif;
   font-weight: 500;
   font-size: 14px;
-  color: var(--color3);
+  color: var(--font-color);
 
-  background-color: var(--color3);
+  background-color: var(--full-screen);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -31,15 +43,61 @@
 .app-screen {
   width: 800px;
   height: 100%;
-  background-color: var(--color2);
-  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
+  background-color: var(--app-screen);
+  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--shadow);
+  border-left: 3px solid var(--highlight);
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 @media screen and (max-width: 800px) {
   .app-screen {
     width: 100%;
     height: 100%;
-    background-color: var(--color2);
-    box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--color1);
+    background-color: var(--app-screen);
+    box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--shadow);
+    border-left: 3px solid var(--highlight);
+    border-left: 3px solid var(--highlight);
+    position: relative;
+    display: flex;
+    flex-direction: column;
   }
+}
+
+.notify {
+  width: 240px;
+  height: 55px;
+  position: absolute;
+  align-self: center;
+  display: flex;
+  padding: 5px 10px 5px 10px;
+  background-color: var(--app-screen);
+  border-left: 4px solid var(--border-fixed);
+  border-radius: 3px;
+  box-shadow: 0px 0px 0px 1px var(--hover);
+  z-index: 2;
+}
+
+.notify .notify-userName {
+  border-radius: 50%;
+  background-color: var(--header);
+  padding: 5px;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notify .notify-message {
+  margin-left: 3px;
+  margin-top: 7px;
+  align-self: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.spinner {
+  color: var(--highlight);
 }

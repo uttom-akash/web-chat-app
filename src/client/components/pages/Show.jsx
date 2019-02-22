@@ -6,6 +6,7 @@ import "../css/Show.css";
 import Download from "./Download";
 import FindNewFriend from "./FindNewFriend";
 import { Spinner } from "reactstrap";
+import theme from "../util/theme";
 
 class Show extends Component {
   state = {
@@ -57,6 +58,12 @@ class Show extends Component {
     this.ChangeDisplayBackward();
   };
 
+  onSelectTheme = index => {
+    theme(index).map(color =>
+      document.documentElement.style.setProperty(color.name, color.value)
+    );
+  };
+
   ChangeDisplayForward = () => {
     const { currentDisplay } = this.state;
 
@@ -99,6 +106,7 @@ class Show extends Component {
       user,
       receiver,
       messages,
+      friendlist,
       onSend,
       onGetFriends,
       onGetSocket
@@ -115,7 +123,9 @@ class Show extends Component {
             onGetFriends={onGetFriends}
             onFriendSearch={this.onFriendSearch}
             onlogOut={this.onlogOut}
-            profilePicture={user.userProfilePicture}
+            onSelect={this.onSelectTheme}
+            user={user}
+            friendlist={friendlist}
           />
         );
       case "Add-friend":
@@ -151,9 +161,20 @@ class Show extends Component {
   };
 
   render() {
+    const { notifications } = this.props;
+
     return (
       <div className="full-screen">
         <section className="app-screen">
+          {!!notifications && (
+            <div className="notify">
+              <div className="notify-userName">
+                <label>{notifications.userName}</label>
+              </div>
+              <p className="notify-message">{notifications.message}</p>
+            </div>
+          )}
+
           {this.state.loading ? (
             <Spinner type="grow" className="spinner" />
           ) : (

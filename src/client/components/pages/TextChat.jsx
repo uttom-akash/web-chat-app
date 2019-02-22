@@ -28,7 +28,7 @@ class TextChat extends Component {
         rowIndex={index}
       >
         <div style={style}>
-          {user.userEmail === msg.sender ? (
+          {user.userEmail === msg.senderEmail ? (
             <SingleMessage
               msg={msg}
               owner={user.userProfilePicture}

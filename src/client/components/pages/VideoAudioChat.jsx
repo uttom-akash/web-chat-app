@@ -107,7 +107,6 @@ class VideoAudioChat extends Component {
   };
 
   handleLeave = () => {
-    this.onLeave();
     this.localstream.getTracks().forEach(track => track.stop());
     this.peer2peer.close();
     this.peer2peer.onicecandidate = null;

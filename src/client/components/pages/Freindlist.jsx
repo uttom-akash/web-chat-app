@@ -3,24 +3,25 @@ import "../css/FriendList.css";
 import { Spinner } from "reactstrap";
 
 class FriendList extends Component {
-  state = {
-    friendlist: [],
-    loading: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      theme: "1"
+    };
+  }
 
-  componentDidMount = () => {
-    this.setState({ loading: true });
+  componentDidMount = () => this.onGetFriendList();
+
+  onGetFriendList = () => {
     this.props
       .onGetFriends()
-      .then(res => {
-        this.setState({ loading: false });
-        this.setState({ friendlist: res.data.Friendlist });
-      })
+      .then(res => this.setState({ loading: false }))
       .catch(err => this.setState({ loading: false }));
   };
 
   getViews = () => {
-    const { friendlist } = this.state;
+    const { friendlist } = this.props;
 
     const view = friendlist.map((friend, index) => {
       return (
@@ -49,20 +50,37 @@ class FriendList extends Component {
     return view;
   };
 
+  onSelectTheme = e => {
+    this.setState({ theme: e.target.value });
+    this.props.onSelect(this.state.theme);
+  };
+
   render() {
-    const { profilePicture, onFriendSearch, onlogOut } = this.props;
+    const { user, onFriendSearch, onlogOut } = this.props;
+    const { theme } = this.state;
     return (
       <section className="user-box">
         <header className="header">
           <div className="me">
-            <img src={profilePicture} alt="bal" />
+            <img src={user.userProfilePicture} alt="bal" />
+            <p>{user.userName}</p>
           </div>
           <div className="header-control">
             <div className="find-friend" onClick={onFriendSearch}>
               <i className="fas fa-search" />
             </div>
             <div className="log-out" onClick={onlogOut}>
-              <i>logOut</i>
+              <i className="fas fa-sign-out-alt" />
+            </div>
+            <div className="setting">
+              <select
+                onChange={this.onSelectTheme}
+                value={theme}
+                className="select"
+              >
+                <option value="0">black</option>
+                <option value="1">white</option>
+              </select>
             </div>
           </div>
         </header>

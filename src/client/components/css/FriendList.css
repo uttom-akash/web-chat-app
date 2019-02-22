@@ -11,13 +11,14 @@
   justify-content: space-between;
   width: 90%;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--color1);
+  background-color: var(--header);
+  border-bottom: 1px solid var(--line);
 }
 
 .user-box .header .me img {
   width: 5.5rem;
   height: 5.5rem;
-  border: 2px solid var(--color1);
+  border: 1px solid var(--img-border);
   border-radius: 50%;
 }
 
@@ -31,8 +32,8 @@
   width: 2rem;
   height: 2rem;
   border-radius: 50%;
-  border: 1px solid var(--color1);
-  text-shadow: 1px var(--color3);
+  color: var(--highlight);
+  border: 1px solid var(--border);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,16 +47,22 @@
 }
 
 .log-out {
-  padding: 2px;
-  border-bottom: 0.1px solid var(--color1);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: var(--highlight);
+  border: 1px solid var(--border);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .log-out:hover {
   cursor: pointer;
-  border-bottom: 0.1px solid var(--color4);
+  border: 1px solid var(--hover);
 }
 .user-box .header .find-friend:hover {
   cursor: pointer;
-  color: var(--color4);
+  border: 1px solid var(--hover);
   transform: rotate(360deg);
 }
 
@@ -68,18 +75,21 @@
 
 .user-box ul li {
   list-style-type: none;
-  border-bottom: 0.1px solid var(--color1);
+  border-left: 0.2rem solid var(--border);
+  /* border-bottom: 0.1px solid var(--color1); */
 }
 
 .user-box ul li .list {
   display: flex;
   align-self: flex-start;
   border: none;
+  margin: 1px;
 }
 
 .user-box ul li:hover {
   cursor: pointer;
-  border-right: 0.1px solid var(--color4);
+  border-left: 0.2rem solid var(--hover);
+  background-color: var(--header);
 }
 
 .user-box ul li:focus {
@@ -88,7 +98,7 @@
 .avatar {
   display: flex;
   margin: auto 0;
-  padding: 1rem;
+  padding: 0.5rem;
   position: relative;
 }
 
@@ -99,21 +109,21 @@
 }
 
 .avatar .active {
-  border: 2px solid var(--color1);
+  border: 1px solid var(--border);
 }
 
 .avatar .online,
 .offline {
-  width: 1rem;
-  height: 1rem;
-  background-color: var(--color4);
+  width: 0.7rem;
+  height: 0.7rem;
+  background-color: var(--active);
   border-radius: 50%;
   position: absolute;
-  left: 4rem;
+  left: 3.5rem;
 }
 
 .avatar .offline {
-  background-color: var(--color5);
+  background-color: var(--in-active);
 }
 
 .users-list {
@@ -124,7 +134,7 @@
 }
 
 .username {
-  color: var(--color3);
+  color: var(--header-font-color);
   margin: 0;
   padding: 0;
 }
@@ -132,13 +142,34 @@
 .text {
   font-size: 0.7rem;
   font-style: italic;
-  color: var(--color3);
+  color: var(--font-color);
   margin: auto 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .timestamp {
   font-size: 0.7rem;
-  color: var(--color6);
+  color: var(--muted-font-color);
   flex-grow: 0.5;
   margin: auto 0;
+}
+
+.setting {
+  background-color: yellow;
+}
+
+.setting .select {
+  border: 1px solid var(--header);
+  background-color: var(--header);
+  color: var(--hover);
+  font-style: italic;
+}
+
+.setting .select:hover {
+  border: 1px solid var(--hover);
+}
+
+.setting .select:focus {
+  outline: none;
 }

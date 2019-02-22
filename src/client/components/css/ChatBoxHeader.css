@@ -2,6 +2,7 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  background-color: var(--app-screen-deeper);
 }
 
 .menu-bar .btn {
@@ -10,8 +11,8 @@
   font-size: 22px;
   margin-left: 5px;
   border-radius: 0;
-  color: var(--color3);
-  border-bottom: 1.5px solid var(--color2);
+  color: var(--hover);
+  border-bottom: 1.5px solid var(--unhover);
   cursor: pointer;
 }
 .friend-name {
@@ -26,9 +27,9 @@
 }
 
 .friend-name p:hover {
-  color: var(--color4);
+  color: var(--hover);
 }
 .menu-bar .btn:hover {
-  color: var(--color4);
-  border-bottom: 1.5px solid var(--color4);
+  color: var(--hover);
+  border-bottom: 1.5px solid var(--hover);
 }
