@@ -1,6 +1,4 @@
 const cmp = (email1, email2) => {
-  console.log("cpm", email1, email2);
-
   let l1 = email1.length;
   let l2 = email2.length;
 

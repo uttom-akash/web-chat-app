@@ -10,11 +10,20 @@ import {
 } from "react-virtualized";
 import SingleMessage from "./Message";
 class TextChat extends Component {
-  cache = new CellMeasurerCache({
-    fixedWidth: true,
-    defaultHeight: 100
-  });
+  constructor(props) {
+    super(props);
+    this.overscanRowCount = 4;
+    this.cache = new CellMeasurerCache({
+      fixedWidth: true,
+      defaultHeight: 100
+    });
+  }
 
+  componentDidUpdate = prevProps => {
+    if (prevProps !== this.props) {
+      this.overscanRowCount = 7 ^ this.overscanRowCount;
+    }
+  };
   rowRenderer = ({ index, key, parent, style }) => {
     const { user, receiver, messages } = this.props;
     const msg = messages[index];
@@ -61,7 +70,7 @@ class TextChat extends Component {
                 rowHeight={this.cache.rowHeight}
                 rowRenderer={this.rowRenderer}
                 width={width}
-                overscanRowCount={5}
+                overscanRowCount={this.overscanRowCount}
               />
             )}
           </AutoSizer>

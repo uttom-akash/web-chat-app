@@ -47,7 +47,8 @@ class RootForm extends Component {
         size: filePicker.size,
         messageType: true,
         message: "",
-        date: getDateTime()
+        date: getDateTime(),
+        status: "sending"
       });
     };
     reader.readAsDataURL(filePicker);
@@ -69,7 +70,8 @@ class RootForm extends Component {
         size: "",
         messageType: false,
         message,
-        date: getDateTime()
+        date: getDateTime(),
+        status: "sending"
       });
     }
   };

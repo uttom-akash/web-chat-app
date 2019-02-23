@@ -55,6 +55,7 @@ class Show extends Component {
 
   onlogOut = () => {
     sessionStorage.removeItem("userEmail");
+    this.props.onlogOut();
     this.ChangeDisplayBackward();
   };
 
@@ -82,10 +83,15 @@ class Show extends Component {
     }
   };
 
+  onCloseSocket = () => this.props.onCloseSocket();
+
   ChangeDisplayBackward = () => {
     const { currentDisplay } = this.state;
     switch (currentDisplay) {
       case "Chat-box":
+        this.onCloseSocket();
+        this.setState({ currentDisplay: "Friend-list" });
+        return;
       case "Add-friend":
         this.setState({ currentDisplay: "Friend-list" });
         return;
@@ -162,7 +168,6 @@ class Show extends Component {
 
   render() {
     const { notifications } = this.props;
-
     return (
       <div className="full-screen">
         <section className="app-screen">

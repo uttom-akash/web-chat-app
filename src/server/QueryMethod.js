@@ -7,10 +7,15 @@ var roomName = require("./EmailCompareAndRoomName");
 var filedir = require("./FileDirect");
 // var mysql = require("mysql");
 
-const dbUpdateMessageStatus = (senderEmail, receiverEmail, dateTime) => {
-  let query = `UPDATE messages SET status=? WHERE receiverEmail=? AND roomId=? AND  date<=CAST(? AS DATETIME)`;
-  dbGetRoomId(senderEmail, receiverEmail).then(roomId =>
-    pool.query(query, ["seen", receiverEmail, roomId, dateTime])
+const dbUpdateMessageStatus = (
+  senderEmail,
+  receiverEmail,
+  dateTime,
+  status
+) => {
+  let query = `UPDATE messages SET status=? WHERE receiverEmail=? AND roomId=? AND status!=? AND date<=CAST(? AS DATETIME)`;
+  dbGetRoomId(roomName(senderEmail, receiverEmail)).then(roomId =>
+    pool.query(query, [status, receiverEmail, roomId, "seen", dateTime])
   );
 };
 
@@ -23,10 +28,14 @@ const dbSaveMessage = data => {
     fileName,
     type,
     messageType,
-    date
+    date,
+    status
   } = data;
 
-  return dbGetRoomId(receiverEmail, senderEmail).then(roomId => {
+  console.log(data);
+  const room = roomName(receiverEmail, senderEmail);
+
+  return dbGetRoomId(room).then(roomId => {
     let sql = `INSERT INTO messages(roomId,message,senderEmail,receiverEmail,fileName,mimeType,messageType,date,status) 
     VALUES(?,?,?,?,?,?,?,?,?)`;
     return pool
@@ -39,7 +48,7 @@ const dbSaveMessage = data => {
         type,
         messageType,
         date,
-        "delivered"
+        status
       ])
       .then(resultMes => {
         if (messageType) {
@@ -54,8 +63,14 @@ const dbSaveMessage = data => {
 };
 
 const dbMakeRoom = room => {
-  let sql = `INSERT INTO rooms(room) VALUES(?)`;
-  return pool.query(sql, [room]).then(dbresult => dbresult.insertId);
+  return dbGetRoomId(room).then(roomId => {
+    if (roomId) {
+      return roomId;
+    } else {
+      let sql = `INSERT INTO rooms(room) VALUES(?)`;
+      return pool.query(sql, [room]).then(dbresult => dbresult.insertId);
+    }
+  });
 };
 
 const dbGetlastMessage = roomId => {
@@ -77,13 +92,14 @@ const dbGetlastMessage = roomId => {
     .catch(err => console.log(err));
 };
 
-const dbGetRoomId = (receiver, sender) => {
-  const room = roomName(receiver, sender);
-
+const dbGetRoomId = room => {
   let sql = `SELECT id FROM rooms WHERE room=?`;
   return pool
     .query(sql, [room])
-    .then(dbresult => dbresult[0].id)
+    .then(dbresult => {
+      if (dbresult.length) return dbresult[0].id;
+      else return 0;
+    })
     .catch(dberr => console.log(dberr));
 };
 
@@ -98,11 +114,12 @@ const dbGetFriendEmail = userEmail => {
 };
 
 const dbGetProfileInfo = userEmail => {
-  let sql = `SELECT userName,userEmail FROM users WHERE userEmail=?`;
+  let sql = `SELECT userName,userEmail,active FROM users WHERE userEmail=?`;
   return pool.query(sql, [userEmail]).then(dbresult => {
     return {
       userName: dbresult[0].userName,
       userEmail: dbresult[0].userEmail,
+      active: dbresult[0].active,
       profilePicture: `data:image/jpeg;base64,${getProfilePicture(
         dbresult[0].userEmail
       )}`
@@ -113,6 +130,11 @@ const dbGetProfileInfo = userEmail => {
 const getProfilePicture = userEmail =>
   fs.readFileSync(`./src/server/uploads/profile/${userEmail}.jpeg`, "base64");
 
+const dbUpdateUsers = (userEmail, options) => {
+  const query = `UPDATE users SET active=? WHERE userEmail=?`;
+  pool.query(query, [options, userEmail]);
+};
+
 module.exports = {
   dbUpdateMessageStatus,
   dbSaveMessage,
@@ -122,5 +144,6 @@ module.exports = {
   dbGetUid,
   dbGetFriendEmail,
   dbGetProfileInfo,
-  getProfilePicture
+  getProfilePicture,
+  dbUpdateUsers
 };

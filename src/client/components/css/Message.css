@@ -1,11 +1,13 @@
-.messages article {
+#article {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  /* align-items: center; */
   margin-bottom: 1rem;
+  width: 100%;
 }
 
-.chat-screen .messages .proAvatar {
+#article .proAvatar {
   margin: 0.5rem;
   width: 3rem;
   height: 3rem;
@@ -13,7 +15,7 @@
   border-radius: 50%;
 }
 
-.chat-screen .messages img {
+#article img {
   margin: 0.5rem;
   width: 320px;
   height: 240px;
@@ -24,25 +26,41 @@
   flex-direction: row-reverse;
 }
 
-.msg {
-  margin-top: 1%;
-  padding: 1%;
-  border-radius: 15px;
+#article .message-box {
   max-width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+#article .msg {
+  margin: 0;
+  margin-top: 0.1rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  max-width: 100%;
   word-wrap: break-word;
 }
 
-.left .msg {
+.left .message-box .msg {
   background-color: var(--hover);
   color: var(--app-screen);
 }
 
-.right .msg {
+.right .message-box .msg {
   border: 1px solid var(--hover);
   color: var(--font-color);
 }
 
-.messages article video {
+#article .message-box .status {
+  font-size: 0.6rem;
+  padding: 0;
+  margin: 0;
+  align-self: center;
+}
+
+.messages #article video {
   width: 240px;
   height: 120px;
 }

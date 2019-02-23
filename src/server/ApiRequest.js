@@ -12,7 +12,8 @@ var {
   dbGetRoomId,
   dbGetFriendEmail,
   dbGetProfileInfo,
-  getProfilePicture
+  getProfilePicture,
+  dbUpdateUsers
 } = require("./QueryMethod");
 // var bodyParser=require('body-parser');
 
@@ -143,7 +144,7 @@ router.post("/save-message", (req, res) => {
 router.post("/get-message", (req, res) => {
   const { receiver, sender } = req.body.data;
 
-  dbGetRoomId(receiver, sender).then(roomId => {
+  dbGetRoomId(roomName(receiver, sender)).then(roomId => {
     let sql = `SELECT message,senderEmail,receiverEmail,fileName,mimeType,messageType,date,status FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 4`;
     pool
       .query(sql, [roomId])
@@ -204,6 +205,7 @@ router.post("/login", (req, res) => {
             userEmail
           )}`
         });
+        dbUpdateUsers(userEmail, 1);
       } else {
         res.status(400).json({ error: "Credentials is not valid" });
       }
@@ -236,9 +238,14 @@ router.post("/current-user", (req, res) => {
     .catch(err => res.status(400).json({ error: "user not found" }));
 });
 
+router.post("/logOut", (req, res) => {
+  const { userEmail } = req.body.data;
+  dbUpdateUsers(userEmail, 0);
+});
+
 router.post("/get-friends", (req, res) => {
   const { userEmail } = req.body.data;
-
+  // dbUpdateUsers(userEmail);
   dbGetFriendEmail(userEmail).then(friendsEmailList => {
     let friendsInfoList = friendsEmailList.map(
       ({ secondEmail: friendEmail, roomId }) =>

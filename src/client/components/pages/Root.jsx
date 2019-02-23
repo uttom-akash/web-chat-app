@@ -81,16 +81,35 @@ class Root extends Component {
   //initialize
   initSocket = (receiver, sender) => {
     this.socket = getSocket(receiver, sender, this.addMessage);
-    this.onListen();
+    this.onListen(receiver, sender);
   };
 
-  onListen = () => {
+  onListen = (receiver, sender) => {
     this.socket.on("responseMessage", msg => {
       this.addMessage(msg, "socket");
-      this.socket.emit("received", "received");
+      this.socket.emit("status", "seen");
     });
+    this.socket.on("peer_in_room", peer => this.onGetMessage(receiver, sender));
+    this.socket.on("status", status => this.lastMessageSent(status));
+  };
 
-    this.socket.on("status", msg => console.log(msg));
+  lastMessageSent = status => {
+    const messages = this.state.messages;
+    const { userEmail } = this.state.user;
+    let length = messages.length;
+
+    for (let index = length - 1; index >= 0; index--) {
+      if (
+        messages[index].senderEmail === userEmail &&
+        messages[index].status !== "failed" &&
+        messages[index].status !== "seen"
+      ) {
+        messages[index].status = status;
+        this.setState({ messages });
+        console.log(this.state.messages);
+        break;
+      }
+    }
   };
 
   //adding message
@@ -177,22 +196,20 @@ class Root extends Component {
 
     const receiver = friendData.userEmail;
     const sender = this.state.user.userEmail;
-    if (this.socket) this.socket.close();
+    this.onCloseSocket();
     this.initSocket(receiver, sender);
-    //get last 10 message
-    return axios
-      .post("/api/get-message", {
-        data: {
-          receiver,
-          sender
-        }
-      })
+    //get last 4 message
+    return this.onGetMessage(receiver, sender);
+  };
+
+  onGetMessage = (receiver, sender) =>
+    axios
+      .post("/api/get-message", { data: { receiver, sender } })
       .then(res => {
-        this.setState({ messages: res.data.messages });
+        this.setState({ messages: res.data.messages.reverse() });
         return res;
       })
       .catch(error => console.log(error));
-  };
 
   onGetFriends = () =>
     axios
@@ -204,7 +221,17 @@ class Root extends Component {
         return res;
       });
 
+  onlogOut = () => {
+    axios.post("/api/logOut", {
+      data: { userEmail: this.state.user.userEmail }
+    });
+  };
+
   onGetSocket = () => this.socket;
+  onCloseSocket = () => {
+    if (this.socket) this.socket.close();
+    this.setState({ messages: [] });
+  };
   //render
   render() {
     const { user, receiver, messages, friendlist, notifications } = this.state;
@@ -220,6 +247,8 @@ class Root extends Component {
           onRefresh={this.onRefresh}
           onAddFriend={this.onAddFriend}
           onGetSocket={this.onGetSocket}
+          onlogOut={this.onlogOut}
+          onCloseSocket={this.onCloseSocket}
           user={user}
           receiver={receiver}
           messages={messages}
