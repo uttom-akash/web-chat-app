@@ -1,4 +1,8 @@
-var { dbSaveMessage, dbUpdateMessageStatus } = require("./QueryMethod");
+var {
+  dbSaveMessage,
+  dbUpdateMessageStatus,
+  dbUpdateUsers
+} = require("./QueryMethod");
 var { getDateTime } = require("./Date");
 var roomName = require("./EmailCompareAndRoomName");
 
@@ -6,17 +10,29 @@ class Socket {
   constructor(io) {
     this.io = io;
     this.listening(this.io);
+    this.listeningOnLogin(this.io);
   }
 
+  listeningOnLogin(io) {
+    io.of("/login").on("connection", socket => {
+      const { userEmail } = socket.handshake.query;
+      console.log("user : ", socket.handshake.query);
+      socket.on("disconnect", () => {
+        console.log(userEmail);
+        dbUpdateUsers(userEmail, 0);
+      });
+    });
+  }
   listening(io) {
-    io.on("connection", socket => this.connectionHandle(socket, io));
+    io.of("/chat").on("connection", socket =>
+      this.connectionHandle(socket, io)
+    );
   }
 
   connectionHandle(socket, io) {
     const { receiver, sender, dateTime } = socket.handshake.query;
     const room = roomName(receiver, sender);
     socket.join(room);
-
     //when one peer enter the room status
     dbUpdateMessageStatus(receiver, sender, dateTime, "seen");
 

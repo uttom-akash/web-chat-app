@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
-import getSocket from "../socket/Socket";
+import { onGetRoomSocket, onGetLoginSocket } from "../socket/Socket";
 import Show from "./Show";
 import { getDateTime } from "../util/Date";
 
 class Root extends Component {
-  socket = null;
   constructor(props) {
     super(props);
     this.state = {
@@ -23,6 +22,9 @@ class Root extends Component {
         userProfilePicture: ""
       }
     };
+
+    this.socket = null;
+    this.login = null;
     this.timer = 10 * 1000;
     this.listRef = React.createRef();
   }
@@ -80,7 +82,7 @@ class Root extends Component {
 
   //initialize
   initSocket = (receiver, sender) => {
-    this.socket = getSocket(receiver, sender, this.addMessage);
+    this.socket = onGetRoomSocket(receiver, sender, this.addMessage);
     this.onListen(receiver, sender);
   };
 
@@ -148,6 +150,7 @@ class Root extends Component {
   };
 
   onLogin = loginData => {
+    this.login = onGetLoginSocket(this.state.user.userEmail);
     return axios.post("/api/login", { data: loginData }).then(res => {
       this.setState({
         user: {
@@ -222,9 +225,7 @@ class Root extends Component {
       });
 
   onlogOut = () => {
-    axios.post("/api/logOut", {
-      data: { userEmail: this.state.user.userEmail }
-    });
+    if (this.login) this.login.disconnect();
   };
 
   onGetSocket = () => this.socket;
