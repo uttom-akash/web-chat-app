@@ -25,7 +25,7 @@ class Root extends Component {
 
     this.socket = null;
     this.login = null;
-    this.timer = 10 * 1000;
+    this.timer = 7 * 1000;
     this.listRef = React.createRef();
   }
 
@@ -130,9 +130,6 @@ class Root extends Component {
     messageObject.receiverEmail = this.state.receiver.receiverEmail;
     this.socket.emit("requestMessage", messageObject);
     this.addMessage(messageObject, "user");
-    // axios
-    //   .post("/api/save-message", { data: messageObject })
-    //   .catch(error => console.log(error));
   };
 
   onRegister = RegisterData => {
@@ -229,10 +226,15 @@ class Root extends Component {
   };
 
   onGetSocket = () => this.socket;
+
   onCloseSocket = () => {
     if (this.socket) this.socket.close();
     this.setState({ messages: [] });
   };
+  onUnFriend = secondEmail =>
+    axios.post("/api/unfriend", {
+      data: { secondEmail, firstEmail: this.state.user.userEmail }
+    });
   //render
   render() {
     const { user, receiver, messages, friendlist, notifications } = this.state;
@@ -250,6 +252,7 @@ class Root extends Component {
           onGetSocket={this.onGetSocket}
           onlogOut={this.onlogOut}
           onCloseSocket={this.onCloseSocket}
+          onUnFriend={this.onUnFriend}
           user={user}
           receiver={receiver}
           messages={messages}

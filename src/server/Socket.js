@@ -16,9 +16,8 @@ class Socket {
   listeningOnLogin(io) {
     io.of("/login").on("connection", socket => {
       const { userEmail } = socket.handshake.query;
-      console.log("user : ", socket.handshake.query);
       socket.on("disconnect", () => {
-        console.log(userEmail);
+        console.log("dis : ", userEmail);
         dbUpdateUsers(userEmail, 0);
       });
     });

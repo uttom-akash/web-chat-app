@@ -264,25 +264,31 @@ router.post("/get-friends", (req, res) => {
 });
 
 router.post("/search", (req, res) => {
-  const { query } = req.body.data;
+  const { firstEmail, query } = req.body.data;
   let sql = `SELECT userName,userEmail,active FROM users WHERE userName REGEXP ? LIMIT 7`;
 
   pool.query(sql, [`^${query}`]).then(dbresult => {
-    let peoples = dbresult.map(people => {
+    let peoplesPromises = dbresult.map(people => {
       const { userName, userEmail, active } = people;
-      return {
-        userName,
-        userEmail,
-        active,
-        profilePicture: `data:image/jpeg;base64,${getProfilePicture(
-          people.userEmail
-        )}`
-      };
+      sql = `SELECT EXISTS(SELECT * FROM friends WHERE firstEmail=? AND secondEmail=?) AS isFriend`;
+      return pool
+        .query(sql, [firstEmail, userEmail])
+        .then(dbresult2 => {
+          return {
+            userName,
+            userEmail,
+            active,
+            isFriend: dbresult2[0].isFriend,
+            profilePicture: `data:image/jpeg;base64,${getProfilePicture(
+              people.userEmail
+            )}`
+          };
+        })
+        .catch(dberr => console.log(dberr));
     });
-    res.json({ peoples });
+    Promise.all(peoplesPromises).then(peoples => res.json({ peoples }));
   });
 });
-
 router.post("/add-friend", (req, res) => {
   const { friendEmail, myEmail, date } = req.body.data;
   const room = roomName(friendEmail, myEmail);
@@ -293,6 +299,18 @@ router.post("/add-friend", (req, res) => {
       .then(dbresult => res.json({ status: true }))
       .catch(dbresult => res.json({ status: false }));
   });
+});
+
+router.post("/unfriend", (req, res) => {
+  const { firstEmail, secondEmail } = req.body.data;
+  console.log(firstEmail, secondEmail);
+  const room = roomName(firstEmail, secondEmail);
+  let sql = `DELETE  FROM  rooms WHERE room=?;`;
+
+  pool
+    .query(sql, [room])
+    .then(dbresult => res.json({}))
+    .catch(dberr => res.json({}));
 });
 
 module.exports = router;

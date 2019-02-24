@@ -53,6 +53,10 @@ class Show extends Component {
     return this.props.onAddFriend(userEmail);
   };
 
+  onUnFriend = userEmail => {
+    return this.props.onUnFriend(userEmail);
+  };
+
   onlogOut = () => {
     sessionStorage.removeItem("userEmail");
     this.props.onlogOut();
@@ -137,8 +141,10 @@ class Show extends Component {
       case "Add-friend":
         return (
           <FindNewFriend
+            user={user}
             backward={this.ChangeDisplayBackward}
             onAddFriend={this.onAddFriend}
+            onUnFriend={this.onUnFriend}
           />
         );
       case "Chat-box":

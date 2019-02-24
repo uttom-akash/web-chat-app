@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import "../css/Credentials.css";
+import "../css/Register.css";
 import validator from "validator";
 import { Spinner } from "reactstrap";
 
@@ -8,12 +8,17 @@ class RegisterForm extends Component {
     userName: "",
     userEmail: "",
     password: "",
+    confirmPassword: "",
     profilePicture: null,
+    pictureName: "Choose picture",
     error: {},
     loading: false
   };
   onFileChange = ev => {
     const pro = ev.target.files[0];
+    if (!pro) return;
+
+    this.setState({ pictureName: pro.name });
     let reader = new FileReader();
     reader.onload = ev => {
       this.setState({ profilePicture: reader.result });
@@ -43,29 +48,46 @@ class RegisterForm extends Component {
   };
 
   onValidate = () => {
-    const { userEmail, password, userName } = this.state;
+    const { userEmail, password, confirmPassword, userName } = this.state;
     let error = {};
     if (!userName) error.userName = "user name can't be blank..";
     if (!password) error.password = "password can't be blank..";
+    if (password !== confirmPassword)
+      error.confirmPassword = "password doesn't match";
     if (!validator.isEmail(userEmail)) error.userEmail = "email is not valid..";
 
     return error;
   };
 
   getView = () => {
-    const { userName, userEmail, password, profilePicture } = this.state;
+    const {
+      userName,
+      userEmail,
+      password,
+      confirmPassword,
+      profilePicture,
+      pictureName
+    } = this.state;
 
     return (
       <form onSubmit={this.onSubmit} className="form">
-        <img src={profilePicture} alt="user-pro-pic" className="pro-pic" />
+        {!!this.state.profilePicture ? (
+          <img src={profilePicture} alt="user-pro-pic" className="pro-pic" />
+        ) : (
+          <i className="fas fa-user" id="pro-icon" />
+        )}
         <input
           type="file"
           name="pro-pic"
           onChange={this.onFileChange}
           className="pro-file"
           id="pic"
+          style={{ width: "0px", height: "0px", opacity: "0" }}
         />
-        <label htmlFor="pic">photo</label>
+        <label htmlFor="pic" className="file-chooser">
+          <i className="far fa-image" />
+          <p>{pictureName}</p>
+        </label>
 
         <input
           type="text"
@@ -91,6 +113,14 @@ class RegisterForm extends Component {
           onChange={this.onChange}
           placeholder="password"
           className={`${!!this.state.error.password}`}
+        />
+        <input
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={this.onChange}
+          placeholder="confirm password"
+          className={`${!!this.state.error.confirmPassword}`}
         />
         <button className="btn">Register</button>
         {this.state.error.global && (

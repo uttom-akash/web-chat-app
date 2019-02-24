@@ -6,7 +6,7 @@ class NewFriend extends Component {
   state = {
     query: "",
     peoples: [],
-    status: null
+    loading: false
   };
 
   onChange = ev => {
@@ -14,26 +14,51 @@ class NewFriend extends Component {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.onSearch(), 500);
   };
-
+  f;
   onSearch = () => {
+    const { userEmail: firstEmail } = this.props.user;
     const { query } = this.state;
     axios
-      .post("/api/search", { data: { query } })
+      .post("/api/search", { data: { firstEmail, query } })
       .then(res => this.setState({ peoples: res.data.peoples }))
       .catch(err => console.log(err));
   };
 
-  onAddFriend = userEmail =>
+  onUnFriend = (userEmail, index) => {
+    this.setState({ loading: true });
+    this.props.onUnFriend(userEmail).then(res => {
+      if (this.state.peoples[index].userEmail === userEmail) {
+        const peoples = this.state.peoples;
+        peoples[index].isFriend = 0;
+        this.setState({ peoples });
+        this.setState({ loading: false });
+      }
+    });
+  };
+
+  onAddFriend = (userEmail, index) => {
+    this.setState({ loading: true });
     this.props
       .onAddFriend(userEmail)
-      .then(res => this.setState({ status: res.data.status }))
+      .then(res => {
+        if (this.state.peoples[index].userEmail === userEmail) {
+          const peoples = this.state.peoples;
+          peoples[index].isFriend = 1;
+          this.setState({ peoples });
+          this.setState({ loading: false });
+        }
+      })
       .catch(err => console.log(err));
+  };
 
   getViews = () => {
     const { peoples } = this.state;
-    const { onAddFriend } = this.props;
+    const { user } = this.props;
+
+    console.log(peoples);
 
     let views = peoples.map((people, index) => {
+      if (people.userEmail === user.userEmail) return <div key={index} />;
       return (
         <li className="people-item" key={index}>
           <div className="people-info">
@@ -45,10 +70,17 @@ class NewFriend extends Component {
             <p className="people-user-name">{people.userName}</p>
           </div>
 
-          <i
-            className="fas fa-plus"
-            onClick={() => onAddFriend(people.userEmail)}
-          />
+          {people.isFriend ? (
+            <i
+              className="fas fa-minus"
+              onClick={() => this.onUnFriend(people.userEmail, index)}
+            />
+          ) : (
+            <i
+              className="fas fa-plus"
+              onClick={() => this.onAddFriend(people.userEmail, index)}
+            />
+          )}
         </li>
       );
     });

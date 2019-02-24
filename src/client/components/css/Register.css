@@ -1,0 +1,81 @@
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form input {
+  margin: 3px;
+  padding: 3px;
+  border: 0.5px solid var(--border-fixed);
+  border-radius: 7px;
+  width: 40%;
+  color: var(--font-color);
+  background-color: var(--app-screen);
+  transition: all 500ms ease;
+}
+
+.form input:focus {
+  background-color: var(--app-screen);
+  width: 70%;
+  outline: none;
+}
+
+.form .btn {
+  margin: 5px;
+  padding: 2px 12px 2px 12px;
+  border: 0.5px solid var(--border-fixed);
+  border-radius: 7px;
+  color: var(--font-color);
+}
+
+.form .btn:hover {
+  color: var(--app-screen);
+  background-color: var(--hover);
+}
+
+.form .true {
+  border: 0.5px solid var(--error);
+  border-radius: 7px;
+  background-color: var(--app-screen);
+}
+
+.form .pro-pic {
+  width: 7.5rem;
+  height: 7.5rem;
+  border: 1.5px solid var(--border);
+  border-radius: 50%;
+}
+
+.form #pro-icon {
+  font-size: 7.5rem;
+  color: var(--hover);
+}
+
+.form .error {
+  border: 2px solid var(--error);
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  color: var(--error);
+}
+
+.spinner {
+  color: yellowgreen;
+}
+
+.form .file-chooser {
+  display: flex;
+}
+
+.file-chooser i {
+  font-size: 1.5rem;
+  margin: 2px;
+  color: var(--hover);
+}
+
+.file-chooser p {
+  margin: 2px;
+}
