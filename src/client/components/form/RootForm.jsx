@@ -42,7 +42,7 @@ class RootForm extends Component {
     reader.onload = e => {
       this.props.onSend({
         fileName: filePicker.name,
-        type: filePicker.type,
+        mimeType: filePicker.type,
         file: reader.result,
         size: filePicker.size,
         messageType: true,
@@ -65,7 +65,7 @@ class RootForm extends Component {
     } else {
       this.props.onSend({
         fileName: "",
-        type: "",
+        mimeType: "",
         file: null,
         size: "",
         messageType: false,
@@ -110,6 +110,9 @@ class RootForm extends Component {
           <label htmlFor="file" className="btn">
             <i className="fas fa-paperclip" />
           </label>
+          {!!this.state.filePicker && (
+            <label className="file-name">{this.state.filePicker.name}</label>
+          )}
           <textarea
             type="text"
             name="message"

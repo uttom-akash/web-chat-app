@@ -5,7 +5,7 @@ export default props => {
   const { msg, me, owner } = props;
   let side = me ? "right" : "left";
   let sub = "";
-  if (msg.type) sub = msg.type.substring(0, 3);
+  if (msg.mimeType) sub = msg.mimeType.substring(0, 3);
 
   switch (sub) {
     case "vid":
@@ -26,7 +26,20 @@ export default props => {
       return (
         <article className={side} id="article">
           <img src={owner} alt="avatar" className="proAvatar" />
-          <img src={msg.file} alt="message" />
+          <div className="message-box">
+            <img src={msg.file} alt="message" className="msg-img" />
+            {me && <p className="status">{msg.status}</p>}
+          </div>
+        </article>
+      );
+    case "":
+      return (
+        <article className={side} id="article">
+          <img src={owner} alt="avatar" className="proAvatar" />
+          <div className="message-box">
+            <p className="msg">{msg.message}</p>
+            {me && <p className="status">{msg.status}</p>}
+          </div>
         </article>
       );
     default:
@@ -34,8 +47,10 @@ export default props => {
         <article className={side} id="article">
           <img src={owner} alt="avatar" className="proAvatar" />
           <div className="message-box">
-            <p className="msg">{msg.message}</p>
-            <p className="status">{msg.status}</p>
+            <a href={msg.file} className="url">
+              {msg.fileName}
+            </a>
+            {me && <p className="status">{msg.status}</p>}
           </div>
         </article>
       );

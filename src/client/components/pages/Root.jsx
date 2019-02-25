@@ -62,18 +62,21 @@ class Root extends Component {
         if (
           currFriendList[index].messages.senderEmail !==
             this.state.user.userEmail &&
-          prevFriendList[index].messages.message !==
-            currFriendList[index].messages.message
+          prevFriendList[index].messages.date !==
+            currFriendList[index].messages.date
         ) {
           let notifications = {};
           notifications.userName = currFriendList[index].profile.userName;
+          notifications.userEmail = currFriendList[index].profile.userEmail;
+          notifications.profilePicture =
+            currFriendList[index].profile.profilePicture;
           notifications.message = currFriendList[index].messages.message;
 
           this.setState({ notifications });
           clearTimeout(this.notfy);
           this.notfy = setTimeout(
             () => this.setState({ notifications: null }),
-            10 * 1000
+            8 * 1000
           );
         }
       }
@@ -133,6 +136,7 @@ class Root extends Component {
   };
 
   onRegister = RegisterData => {
+    this.login = onGetLoginSocket(RegisterData.userEmail);
     return axios.post("/api/register", { data: RegisterData }).then(res => {
       this.setState({
         user: {
@@ -147,7 +151,7 @@ class Root extends Component {
   };
 
   onLogin = loginData => {
-    this.login = onGetLoginSocket(this.state.user.userEmail);
+    this.login = onGetLoginSocket(loginData.userEmail);
     return axios.post("/api/login", { data: loginData }).then(res => {
       this.setState({
         user: {
@@ -162,6 +166,7 @@ class Root extends Component {
   };
 
   onRefresh = userEmail => {
+    this.login = onGetLoginSocket(userEmail);
     return axios
       .post("/api/current-user", { data: { userEmail } })
       .then(res => {
@@ -187,6 +192,7 @@ class Root extends Component {
 
   onSelectFriend = friendData => {
     this.setState({
+      notifications: null,
       receiver: {
         receiverName: friendData.userName,
         receiverEmail: friendData.userEmail,

@@ -13,6 +13,7 @@
   padding: 1.5rem;
   background-color: var(--header);
   border-bottom: 1px solid var(--line);
+  /* box-shadow: 0 1px 1px 0 var(--font-color); */
 }
 
 .user-box .header .me img {

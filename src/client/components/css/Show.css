@@ -7,7 +7,7 @@
   --header-font-color: #26231f;
   --font-color: #4a575e;
   --muted-font-color: #73797c;
-  --line: #c7d4da;
+  --line: #76c8eb;
   --img-border: #c7d4da;
   --border: #f2f5f8;
   --border-fixed: #2eb5f0;
@@ -44,7 +44,7 @@
   width: 800px;
   height: 100%;
   background-color: var(--app-screen);
-  box-shadow: 0.01rem 0.01rem 0.01rem 0.1rem var(--shadow);
+  box-shadow: 0rem 0.2rem 0.3rem 0rem var(--font-color);
   border-left: 3px solid var(--highlight);
   position: relative;
   display: flex;
@@ -70,28 +70,55 @@
   height: 55px;
   position: absolute;
   align-self: center;
+
   display: flex;
-  padding: 5px 10px 5px 10px;
+  padding: 0 5px 0 0;
   background-color: var(--app-screen);
-  border-left: 4px solid var(--border-fixed);
   border-radius: 3px;
-  box-shadow: 0px 0px 0px 1px var(--hover);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   z-index: 2;
+  animation: notify 8s ease-in-out alternate;
+}
+
+@keyframes notify {
+  0% {
+    top: -55px;
+  }
+  10% {
+    top: 0px;
+  }
+  90% {
+    top: 0px;
+  }
+  100% {
+    top: -55px;
+  }
 }
 
 .notify .notify-userName {
-  border-radius: 50%;
-  background-color: var(--header);
-  padding: 5px;
+  border-radius: 5px 50% 50% 5px;
+  padding: 0 5px 0 2px;
   margin: 0;
+  box-shadow: 0 2px 2px 0 gray;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  animation: user-name 1s ease-in-out forwards;
+}
+
+@keyframes user-name {
+  100% {
+    background-color: var(--hover);
+    color: var(--app-screen-deeper);
+  }
 }
 
 .notify .notify-message {
   margin-left: 3px;
   margin-top: 7px;
+  color: var(--hover);
   align-self: center;
   text-overflow: ellipsis;
   overflow: hidden;

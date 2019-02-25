@@ -44,7 +44,6 @@ class Show extends Component {
     this.ChangeDisplayForward();
     this.props.onSelectFriend(friendData);
   };
-
   onFriendSearch = () => {
     this.setState({ currentDisplay: "Add-friend" });
   };
@@ -178,7 +177,10 @@ class Show extends Component {
       <div className="full-screen">
         <section className="app-screen">
           {!!notifications && (
-            <div className="notify">
+            <div
+              className="notify"
+              onClick={() => this.onSelectFriend(notifications)}
+            >
               <div className="notify-userName">
                 <label>{notifications.userName}</label>
               </div>

@@ -143,7 +143,6 @@ router.post("/save-message", (req, res) => {
 
 router.post("/get-message", (req, res) => {
   const { receiver, sender } = req.body.data;
-
   dbGetRoomId(roomName(receiver, sender)).then(roomId => {
     let sql = `SELECT message,senderEmail,receiverEmail,fileName,mimeType,messageType,date,status FROM messages WHERE roomId=? ORDER BY id DESC  LIMIT 4`;
     pool
@@ -153,13 +152,14 @@ router.post("/get-message", (req, res) => {
           item.file = "";
           if (item.messageType) {
             const content = fs.readFileSync(
-              `${filedir(item.type)}/${item.fileName}`,
+              `${filedir(item.mimeType)}/${item.fileName}`,
               { encoding: "base64" }
             );
-            item.file = `data:${item.type};base64,${content}`;
+            item.file = `data:${item.mimeType};base64,${content}`;
           }
           return item;
         });
+
         res.json({ messages: resultMessages });
       })
       .catch(err => res.status(400).json({ status: "failed" }));
@@ -303,7 +303,6 @@ router.post("/add-friend", (req, res) => {
 
 router.post("/unfriend", (req, res) => {
   const { firstEmail, secondEmail } = req.body.data;
-  console.log(firstEmail, secondEmail);
   const room = roomName(firstEmail, secondEmail);
   let sql = `DELETE  FROM  rooms WHERE room=?;`;
 

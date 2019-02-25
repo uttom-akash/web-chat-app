@@ -26,13 +26,12 @@ const dbSaveMessage = data => {
     receiverEmail,
     senderEmail,
     fileName,
-    type,
+    mimeType,
     messageType,
     date,
     status
   } = data;
 
-  console.log(data);
   const room = roomName(receiverEmail, senderEmail);
 
   return dbGetRoomId(room).then(roomId => {
@@ -45,14 +44,14 @@ const dbSaveMessage = data => {
         senderEmail,
         receiverEmail,
         fileName,
-        type,
+        mimeType,
         messageType,
         date,
         status
       ])
       .then(resultMes => {
         if (messageType) {
-          fs.createWriteStream(`${filedir(type)}/${fileName}`).write(
+          fs.createWriteStream(`${filedir(mimeType)}/${fileName}`).write(
             new Buffer(file.split(",")[1], "base64")
           );
         }

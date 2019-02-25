@@ -10,6 +10,7 @@ export const onGetRoomSocket = (receiver, sender) => {
   return socket;
 };
 export const onGetLoginSocket = userEmail => {
+  console.log(userEmail);
   const socket = io(`${url}/login`, { query: { userEmail }, multiplex: false });
   return socket;
 };

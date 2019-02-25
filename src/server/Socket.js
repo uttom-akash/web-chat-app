@@ -16,8 +16,8 @@ class Socket {
   listeningOnLogin(io) {
     io.of("/login").on("connection", socket => {
       const { userEmail } = socket.handshake.query;
+      dbUpdateUsers(userEmail, 1);
       socket.on("disconnect", () => {
-        console.log("dis : ", userEmail);
         dbUpdateUsers(userEmail, 0);
       });
     });
@@ -54,8 +54,6 @@ class Socket {
 
     socket.on("status", status => socket.to(room).emit("status", status));
     socket.on("disconnect", () => {
-      console.log("disconnect");
-
       //sender==receiver seen if not seen
       dbUpdateMessageStatus(receiver, sender, getDateTime(), "seen");
       //receiver==reciver sent if not seen
