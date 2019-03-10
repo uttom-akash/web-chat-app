@@ -5,10 +5,5 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { MemoryRouter } from "react-router-dom";
 
-ReactDOM.render(
-  <MemoryRouter>
-    <App />
-  </MemoryRouter>,
-  document.getElementById("root")
-);
+ReactDOM.render(<App />, document.getElementById("root"));
 serviceWorker.unregister();

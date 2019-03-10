@@ -9,23 +9,24 @@
 .find-header {
   width: 100%;
   display: flex;
+  background-color: var(--app-screen-header);
   justify-content: space-between;
 }
 
 .find-header .btn {
   border-radius: 0;
-  border-bottom: 1.5px solid var(--unhover);
+  border-bottom: 3px solid var(--app-screen-header);
 }
 
 .find-header .btn i {
   font-size: 1.5rem;
   margin: 0;
-  color: var(--hover);
+  color: var(--icon-color);
   cursor: pointer;
 }
 
 .find-header .btn:hover {
-  border-bottom: 1.5px solid var(--hover);
+  border-bottom: 3px solid var(--icon-color);
 }
 
 .find-header .search-bar {
@@ -54,11 +55,11 @@
   margin-bottom: 5px;
   padding: 3px;
   border-bottom: 1px solid var(--line);
-  border-left: 2px solid var(--unhover);
+  border-right: 3px solid var(--app-screen);
 }
 
 .people-list .people-item:hover {
-  border-left: 2px solid var(--hover);
+  border-right: 3px solid var(--hover);
 }
 
 .people-item .people-info {

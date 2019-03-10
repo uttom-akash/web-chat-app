@@ -14,10 +14,25 @@ class Chat extends Component {
   onVideo = () => this.setState({ text: false, audio: true, video: true });
 
   getView = () => {
-    const { messages, user, receiver, onSend, onGetSocket } = this.props;
-    const { text, audio, video } = this.state;
+    const {
+      messages,
+      onCallEnd,
+      user,
+      receiver,
+      onSend,
+      onGetSocket,
+      onActiveSocket,
+      onToggleAccept,
+      accept
+    } = this.props;
+    let { text, audio, video } = this.state;
 
-    switch (text) {
+    if (accept.accept) {
+      audio = accept.audio;
+      video = accept.video;
+    }
+    console.log(accept.accept);
+    switch (text && !accept.accept) {
       case true:
         return (
           <TextChat
@@ -30,9 +45,12 @@ class Chat extends Component {
       case false:
         return (
           <VideoAudio
-            sender={user.userEmail}
+            onToggleAccept={onToggleAccept}
+            onCallEnd={onCallEnd}
+            sender={user}
             receiver={receiver.receiverEmail}
             onGetSocket={onGetSocket}
+            onActiveSocket={onActiveSocket}
             audio={audio}
             video={video}
             onText={this.onText}

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import "../css/Credentials.css";
+//import "../css/Credentials.css";
+import "../css/Form.css";
 import validator from "validator";
 import { Spinner } from "reactstrap";
 
@@ -23,8 +24,9 @@ class Login extends Component {
     if (Object.keys(error).length === 0) {
       this.setState({ loading: true });
       this.props.onLogin({ userEmail, password }).catch(err => {
-        error.global = err.response.data.error;
-        this.setState({ error });
+        console.log(err);
+        // error.global = err.response.data.error;
+        // this.setState({ error });
         this.setState({ loading: false });
       });
     }

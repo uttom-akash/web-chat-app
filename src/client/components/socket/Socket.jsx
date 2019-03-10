@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 import { getDateTime } from "../util/Date";
 
-const url = "http://localhost:8080";
+const url = "http://192.168.0.110:8089";
 
 export const onGetRoomSocket = (receiver, sender) => {
   const socket = io(`${url}/chat`, {
@@ -10,7 +10,6 @@ export const onGetRoomSocket = (receiver, sender) => {
   return socket;
 };
 export const onGetLoginSocket = userEmail => {
-  console.log(userEmail);
   const socket = io(`${url}/login`, { query: { userEmail }, multiplex: false });
   return socket;
 };

@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import SearchBar from "../util/SearchBar";
 import axios from "axios";
+import api from "../../api/Api";
+import { getDateTime } from "../util/Date";
+import { connect } from "react-redux";
 import "../css/FindNewFriend.css";
 class NewFriend extends Component {
   state = {
@@ -14,7 +17,7 @@ class NewFriend extends Component {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => this.onSearch(), 500);
   };
-  f;
+
   onSearch = () => {
     const { userEmail: firstEmail } = this.props.user;
     const { query } = this.state;
@@ -26,20 +29,29 @@ class NewFriend extends Component {
 
   onUnFriend = (userEmail, index) => {
     this.setState({ loading: true });
-    this.props.onUnFriend(userEmail).then(res => {
-      if (this.state.peoples[index].userEmail === userEmail) {
-        const peoples = this.state.peoples;
-        peoples[index].isFriend = 0;
-        this.setState({ peoples });
-        this.setState({ loading: false });
-      }
-    });
+    api
+      .unFriend({
+        secondEmail: userEmail,
+        firstEmail: this.props.user.userEmail
+      })
+      .then(res => {
+        if (this.state.peoples[index].userEmail === userEmail) {
+          const peoples = this.state.peoples;
+          peoples[index].isFriend = 0;
+          this.setState({ peoples });
+          this.setState({ loading: false });
+        }
+      });
   };
 
   onAddFriend = (userEmail, index) => {
     this.setState({ loading: true });
-    this.props
-      .onAddFriend(userEmail)
+    api
+      .addFriend({
+        friendEmail: userEmail,
+        myEmail: this.props.user.userEmail,
+        date: getDateTime()
+      })
       .then(res => {
         if (this.state.peoples[index].userEmail === userEmail) {
           const peoples = this.state.peoples;
@@ -104,5 +116,8 @@ class NewFriend extends Component {
     );
   }
 }
+const mapStatesToProps = state => ({
+  user: state.user
+});
 
-export default NewFriend;
+export default connect(mapStatesToProps)(NewFriend);

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import "../css/Register.css";
+import "../css/Form.css";
 import validator from "validator";
 import { Spinner } from "reactstrap";
 

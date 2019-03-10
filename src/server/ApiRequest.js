@@ -42,9 +42,9 @@ router.post("/upload", uploads.single("file"), (req, res) => {
   const { receiver, sender, date } = req.body;
   const { originalname, mimetype } = req.file;
 
-  dbGetRoomId(receiver, sender).then(roomId => {
+  dbGetRoomId(roomName(receiver, sender)).then(roomId => {
     let sql = `INSERT INTO uploads(roomId,fileName,mimeType,path,date) VALUES(?,?,?,?,?)`;
-    const path = `http://192.168.0.110:8080/api/download?q=${filedir(
+    const path = `http://192.168.0.110:8089/api/download?q=${filedir(
       mimetype
     )}/${originalname}`;
 
@@ -58,7 +58,7 @@ router.post("/upload", uploads.single("file"), (req, res) => {
 router.post("/download-list", (req, res) => {
   const { sender, receiver } = req.body.data;
 
-  dbGetRoomId(receiver, sender).then(roomId => {
+  dbGetRoomId(roomName(receiver, sender)).then(roomId => {
     let sql = `SELECT fileName,mimeType,path,date FROM uploads WHERE roomId=? ORDER BY id DESC LIMIT 10`;
 
     pool

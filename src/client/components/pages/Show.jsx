@@ -34,11 +34,10 @@ class Show extends Component {
     });
   };
 
-  onLogin = loginData => {
-    return this.props.onLogin(loginData).then(res => {
+  onLogin = loginData =>
+    this.props.onLogin(loginData).then(res => {
       this.ChangeDisplayForward();
     });
-  };
 
   onSelectFriend = friendData => {
     this.ChangeDisplayForward();
@@ -63,9 +62,22 @@ class Show extends Component {
   };
 
   onSelectTheme = index => {
+    console.log(index);
     theme(index).map(color =>
       document.documentElement.style.setProperty(color.name, color.value)
     );
+  };
+  onAnswerCall = (decision, msg) => {
+    this.props.onAnswerCall(decision, msg);
+  };
+
+  componentDidUpdate = prevProps => {
+    if (!prevProps.accept.accept && this.props.accept.accept)
+      this.setState({ currentDisplay: "Chat-box" });
+  };
+
+  onCallEnd = data => {
+    this.props.onCallEnd(data);
   };
 
   ChangeDisplayForward = () => {
@@ -112,13 +124,16 @@ class Show extends Component {
   showDisplay = () => {
     const { currentDisplay } = this.state;
     const {
+      accept,
       user,
       receiver,
       messages,
       friendlist,
       onSend,
       onGetFriends,
-      onGetSocket
+      onGetSocket,
+      onActiveSocket,
+      onToggleAccept
     } = this.props;
 
     switch (currentDisplay) {
@@ -149,6 +164,9 @@ class Show extends Component {
       case "Chat-box":
         return (
           <ChatBox
+            accept={accept}
+            onToggleAccept={onToggleAccept}
+            onCallEnd={this.onCallEnd}
             user={user}
             receiver={receiver}
             messages={messages}
@@ -156,6 +174,7 @@ class Show extends Component {
             forward={this.ChangeDisplayForward}
             backward={this.ChangeDisplayBackward}
             onGetSocket={onGetSocket}
+            onActiveSocket={onActiveSocket}
           />
         );
       case "Download":
@@ -176,18 +195,41 @@ class Show extends Component {
     return (
       <div className="full-screen">
         <section className="app-screen">
-          {!!notifications && (
+          {!!notifications.message && (
             <div
               className="notify"
-              onClick={() => this.onSelectFriend(notifications)}
+              onClick={() => this.onSelectFriend(notifications.message)}
             >
               <div className="notify-userName">
-                <label>{notifications.userName}</label>
+                <label>{notifications.message.userName}</label>
               </div>
-              <p className="notify-message">{notifications.message}</p>
+              <p className="notify-message">{notifications.message.message}</p>
             </div>
           )}
-
+          {!!notifications.call && (
+            <div className="notify">
+              <img
+                style={{ width: "10px", height: "10px" }}
+                src={notifications.call.sender.userProfilePicture}
+                alt="caller"
+              />
+              <div className="notify-userName">
+                <label>{notifications.call.sender.userName}</label>
+              </div>
+              <div
+                onClick={() => this.onAnswerCall("accept", notifications.call)}
+                style={{ color: "white" }}
+              >
+                accept
+              </div>
+              <div
+                style={{ color: "white" }}
+                onClick={() => this.onAnswerCall("reject", notifications.call)}
+              >
+                reject
+              </div>
+            </div>
+          )}
           {this.state.loading ? (
             <Spinner type="grow" className="spinner" />
           ) : (

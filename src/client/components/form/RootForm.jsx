@@ -40,6 +40,7 @@ class RootForm extends Component {
 
     let reader = new FileReader();
     reader.onload = e => {
+      this.setState({ filePicker: null });
       this.props.onSend({
         fileName: filePicker.name,
         mimeType: filePicker.type,

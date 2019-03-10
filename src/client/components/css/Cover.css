@@ -11,14 +11,16 @@
   align-self: flex-end;
   margin: 5px;
   padding: 2px 12px 2px 12px;
-  border: 0.5px solid var(--border-fixed);
-  border-radius: 7px;
-  background-color: var(--app-screen);
+  border: none;
+  background-color: var(--input-color);
+  box-shadow: 0.001rem 0.09rem 0.15rem 0px var(--shadow);
+  border-radius: 4px;
+  color: var(--font-color-button);
 }
 
 .Cover .Registerbtn:hover {
   color: var(--app-screen);
-  background-color: var(--hover);
+  background-color: var(--button-hover);
 }
 
 .Form {

@@ -47,8 +47,10 @@ class Download extends Component {
     const { backward, receiver } = this.props;
     return (
       <section className="download-screen">
-        <div className="btn" onClick={backward}>
-          <i className="fas fa-arrow-left" />
+        <div className="header">
+          <div className="btn" onClick={backward}>
+            <i className="fas fa-arrow-left" />
+          </div>
         </div>
         <section className="download-box">
           <ul className="download-list">{this.getDownloadable()}</ul>

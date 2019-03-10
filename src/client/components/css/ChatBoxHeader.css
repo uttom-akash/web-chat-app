@@ -2,19 +2,19 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  background-color: var(--app-screen-deeper);
+  background-color: var(--app-screen-header);
 }
 
 .menu-bar .btn {
   margin: 0;
-  padding: 2px 5px 1px 5px;
+  padding: 2px 12px 1px 12px;
   font-size: 22px;
-  margin-left: 5px;
   border-radius: 0;
-  color: var(--hover);
-  border-bottom: 1.5px solid var(--unhover);
+  color: var(--icon-color);
+  border-bottom: 3px solid var(--app-screen-header);
   cursor: pointer;
 }
+
 .friend-name {
   padding: 0;
   margin: 0;
@@ -29,7 +29,11 @@
 .friend-name p:hover {
   color: var(--hover);
 }
+.menu-bar .btn:focus {
+  cursor: pointer;
+}
 .menu-bar .btn:hover {
-  color: var(--hover);
-  border-bottom: 1.5px solid var(--hover);
+  color: var(--icon-color);
+  border-bottom: 3px solid var(--icon-color);
+  box-shadow: 0rem 0rem 0.03rem 0.03rem var(--shadow);
 }

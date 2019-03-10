@@ -7,11 +7,21 @@ class FriendList extends Component {
     super(props);
     this.state = {
       loading: true,
-      theme: "1"
+      theme: "1",
+      themeShow: false
     };
   }
 
   componentDidMount = () => this.onGetFriendList();
+
+  onThemeOptions = e => {
+    this.setState({ themeShow: true });
+  };
+  onSelectTheme = e => {
+    this.setState({ themeShow: false });
+    this.setState({ theme: e.target.value });
+    this.props.onSelect(e.target.value);
+  };
 
   onGetFriendList = () => {
     this.props
@@ -52,20 +62,15 @@ class FriendList extends Component {
     return view;
   };
 
-  onSelectTheme = e => {
-    this.setState({ theme: e.target.value });
-    this.props.onSelect(this.state.theme);
-  };
-
   render() {
     const { user, onFriendSearch, onlogOut } = this.props;
-    const { theme } = this.state;
+    const { theme, themeShow } = this.state;
     return (
       <section className="user-box">
         <header className="header">
           <div className="me">
             <img src={user.userProfilePicture} alt="bal" />
-            <p>{user.userName}</p>
+            <h6>{user.userName}</h6>
           </div>
           <div className="header-control">
             <div className="find-friend" onClick={onFriendSearch}>
@@ -74,15 +79,22 @@ class FriendList extends Component {
             <div className="log-out" onClick={onlogOut}>
               <i className="fas fa-sign-out-alt" />
             </div>
-            <div className="setting">
-              <select
-                onChange={this.onSelectTheme}
-                value={theme}
-                className="select"
-              >
-                <option value="0">black</option>
-                <option value="1">white</option>
-              </select>
+            <div>
+              {themeShow ? (
+                <select
+                  onChange={this.onSelectTheme}
+                  value={theme}
+                  className="select"
+                >
+                  <option value="dark">dark</option>
+                  <option value="dark-light">dark-light</option>
+                  <option value="light">light</option>
+                </select>
+              ) : (
+                <div className="setting" onClick={this.onThemeOptions}>
+                  <i className="fas fa-cog" />
+                </div>
+              )}
             </div>
           </div>
         </header>

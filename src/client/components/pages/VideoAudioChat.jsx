@@ -14,21 +14,19 @@ class VideoAudioChat extends Component {
     this.peer2peer = null;
     this.localvdoref = React.createRef();
     this.remotevdoref = React.createRef();
+    this.active = props.onActiveSocket();
     this.socket = props.onGetSocket();
   }
 
   componentDidMount = () => this.onStart();
+
   onToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
   onStart = async () => {
     //modal
     this.onToggle();
-
-    //socket init
-    //this.socket = await getSocket(this.props.receiver, this.props.sender);
     this.onListen();
-    //const media=navigator.mediaDevices.getUserMedia ||
-    navigator.mediaDevices
+    await navigator.mediaDevices
       .getUserMedia({ video: this.props.video, audio: this.props.audio })
       .then(stream => {
         this.localvdoref.current.srcObject = stream;
@@ -54,9 +52,24 @@ class VideoAudioChat extends Component {
         };
       })
       .catch(err => alert(err));
+    //const media=navigator.mediaDevices.getUserMedia ||
   };
 
   onCall = () => {
+    const { receiver, sender, audio, video } = this.props;
+    this.active.emit("call", { receiver, sender, audio, video });
+
+    this.active.on("callAnswer", msg => {
+      console.log("reply:: ", msg.receiver, "  :::::  ", sender.userEmail);
+
+      if (msg.status === "accepted" && msg.receiver === sender.userEmail)
+        this.onCreateOffer();
+      if (msg.status === "rejected" && msg.receiver === sender.userEmail)
+        console.log("rejected");
+    });
+  };
+
+  onCreateOffer = () => {
     this.peer2peer
       .createOffer()
       .then(offer => {
@@ -81,9 +94,16 @@ class VideoAudioChat extends Component {
     this.socket.on("candidate", msg => this.handleCandidate(msg));
     this.socket.on("answer", msg => this.handleAnswer(msg));
     this.socket.on("leave", msg => this.handleLeave());
+    this.socket.on("busy", msg => this.handleBusy(msg));
   };
 
   handleOffer = offer => {
+    console.log("offer");
+    if (this.state.offer) {
+      this.socket.emit("busy", "peer is busy");
+      return;
+    }
+
     this.setState({ offer: true });
     this.peer2peer.setRemoteDescription(new RTCSessionDescription(offer));
     //create an answer to an offer
@@ -107,10 +127,17 @@ class VideoAudioChat extends Component {
   };
 
   handleLeave = () => {
+    const { userName, userEmail, profilePicture } = this.props.sender;
+    this.setState({ offer: false });
     this.localstream.getTracks().forEach(track => track.stop());
     this.peer2peer.close();
     this.peer2peer.onicecandidate = null;
     this.peer2peer.onaddstream = null;
+    this.props.onCallEnd({ userName, userEmail, profilePicture });
+  };
+
+  handleBusy = msg => {
+    console.log(msg);
   };
 
   getView = () => {

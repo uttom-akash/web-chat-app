@@ -7,18 +7,19 @@
 }
 
 .form input {
-  margin: 3px;
-  padding: 3px;
-  border: 0.5px solid var(--border-fixed);
-  border-radius: 7px;
   width: 40%;
-  color: var(--font-color);
-  background-color: var(--app-screen);
+  margin: 5px;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  color: var(--font-color-input);
+  background-color: var(--input-color);
+  box-shadow: 0.001rem 0.09rem 0.15rem 0px var(--shadow);
   transition: all 500ms ease;
 }
 
 .form input:focus {
-  background-color: var(--app-screen);
+  background-color: var(--app-screen-deeper);
   width: 70%;
   outline: none;
 }
@@ -26,14 +27,15 @@
 .form .btn {
   margin: 5px;
   padding: 2px 12px 2px 12px;
-  border: 0.5px solid var(--border-fixed);
-  border-radius: 7px;
-  color: var(--font-color);
+  background-color: var(--input-color);
+  box-shadow: 0.001rem 0.09rem 0.15rem 0px var(--shadow);
+  border-radius: 4px;
+  color: var(--font-color-button);
 }
 
 .form .btn:hover {
   color: var(--app-screen);
-  background-color: var(--hover);
+  background-color: var(--button-hover);
 }
 
 .form .true {
@@ -43,8 +45,8 @@
 }
 
 .form .pro-pic {
-  width: 7rem;
-  height: 7rem;
+  width: 7.5rem;
+  height: 7.5rem;
   border: 1.5px solid var(--border);
   border-radius: 50%;
 }
@@ -58,5 +60,19 @@
 }
 
 .spinner {
-  color: yellowgreen;
+  color: var(--spinner);
+}
+
+.form .file-chooser {
+  display: flex;
+}
+
+.file-chooser i {
+  font-size: 1.5rem;
+  margin: 2px;
+  color: #6d7680;
+}
+
+.file-chooser p {
+  margin: 2px;
 }
