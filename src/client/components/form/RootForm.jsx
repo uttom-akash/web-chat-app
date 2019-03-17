@@ -78,8 +78,6 @@ class RootForm extends Component {
   };
 
   handleOnkeyDown = ev => {
-    console.log("onkey");
-
     ev.target.style.height = "inherit";
     const computed = window.getComputedStyle(ev.target);
     const height =

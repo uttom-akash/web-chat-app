@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import RootForm from "../form/RootForm";
+import "../css/TextChat.css";
 
-import "../css/Chatbox.css";
 import {
   List,
   AutoSizer,
@@ -9,6 +9,7 @@ import {
   CellMeasurerCache
 } from "react-virtualized";
 import SingleMessage from "./Message";
+
 class TextChat extends Component {
   constructor(props) {
     super(props);

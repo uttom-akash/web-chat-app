@@ -1,177 +1,274 @@
-import React, { Component } from "react";
+import React from "react";
 import "../css/VdoChat.css";
 
-class VideoAudioChat extends Component {
-  constructor(props) {
-    super(props);
+import Audio from "../webrtc-api/Audio";
+import Video from "../webrtc-api/Video";
 
-    this.state = {
-      isOpen: false,
-      offer: false
-    };
+export default props => {
+  return (
+    <div className="modal-container" id="modal">
+      {props.video ? <Video {...props} /> : <Audio {...props} />}
+    </div>
+  );
+};
 
-    this.localstream = null;
-    this.peer2peer = null;
-    this.localvdoref = React.createRef();
-    this.remotevdoref = React.createRef();
-    this.active = props.onActiveSocket();
-    this.socket = props.onGetSocket();
-  }
+// class VideoAudioChat extends Component {
 
-  componentDidMount = () => this.onStart();
+//   componentDidMount = () => {
+//     setTimeout(() => this.onWait(), 67 * 1000);
+//     if (this.props.call) this.onCall();
+//     this.onListen();
+//   };
 
-  onToggle = () => this.setState({ isOpen: !this.state.isOpen });
+//   componentWillUnmount = () => {};
 
-  onStart = async () => {
-    //modal
-    this.onToggle();
-    this.onListen();
-    await navigator.mediaDevices
-      .getUserMedia({ video: this.props.video, audio: this.props.audio })
-      .then(stream => {
-        this.localvdoref.current.srcObject = stream;
-        this.localstream = stream;
-        const configuration = {
-          iceServers: [{ url: "stun:stun2.1.google.com:19302" }]
-        };
-        this.peer2peer = new RTCPeerConnection(configuration);
+//   // getrtc = () => {
+//   //   return new Promise((resolve, reject) => {
+//   //     if (!!this.peer2peer) resolve(this.peer2peer);
+//   //     else reject("null");
+//   //   });
+//   // };
 
-        // setup stream listening
-        this.peer2peer.addStream(stream);
+//   // // componentDidUpdate = () =>
+//   // //   document.getElementById("remote").style.setProperty("height", "600px");
 
-        //when a remote user adds stream to the peer connection, we display it
-        this.peer2peer.onaddstream = e => {
-          this.remotevdoref.current.srcObject = e.stream;
-        };
+//   // onToggle = () => this.setState({ isOpen: !this.state.isOpen });
 
-        // Setup ice handling
-        this.peer2peer.onicecandidate = event => {
-          if (event.candidate) {
-            this.socket.emit("candidate", event.candidate);
-          }
-        };
-      })
-      .catch(err => alert(err));
-    //const media=navigator.mediaDevices.getUserMedia ||
-  };
+//   // onStart = () => {
+//   //   return new Promise((resolve, reject) => {
+//   //     navigator.getUserMedia =
+//   //       navigator.getUserMedia ||
+//   //       navigator.webkitGetUserMedia ||
+//   //       navigator.mozGetUserMedia;
 
-  onCall = () => {
-    const { receiver, sender, audio, video } = this.props;
-    this.active.emit("call", { receiver, sender, audio, video });
+//   //     navigator.getUserMedia(
+//   //       { video: this.props.video, audio: this.props.audio },
+//   //       stream => {
+//   //         this.localvdoref.current.srcObject = stream;
+//   //         this.localstream = stream;
+//   //         const configuration = {
+//   //           iceServers: [{ url: "stun:stun2.1.google.com:19302" }]
+//   //         };
+//   //         this.peer2peer = new RTCPeerConnection(configuration);
 
-    this.active.on("callAnswer", msg => {
-      console.log("reply:: ", msg.receiver, "  :::::  ", sender.userEmail);
+//   //         // setup stream listening
+//   //         this.peer2peer.addStream(stream);
 
-      if (msg.status === "accepted" && msg.receiver === sender.userEmail)
-        this.onCreateOffer();
-      if (msg.status === "rejected" && msg.receiver === sender.userEmail)
-        console.log("rejected");
-    });
-  };
+//   //         //when a remote user adds stream to the peer connection, we display it
+//   //         this.peer2peer.onaddstream = e => {
+//   //           this.timeElapsed = setInterval(
+//   //             () => this.setState({ duration: this.state.duration + 1 }),
+//   //             1000
+//   //           );
+//   //           this.remotevdoref.current.srcObject = e.stream;
+//   //         };
 
-  onCreateOffer = () => {
-    this.peer2peer
-      .createOffer()
-      .then(offer => {
-        this.socket.emit("offer", offer);
-        this.peer2peer.setLocalDescription(offer);
-      })
-      .catch(error => {
-        alert("Error when creating an offer");
-      });
-  };
+//   //         //this.peer2peer.onnegotiationneeded = this.onCreateOffer();
 
-  onLeave = () => {
-    this.onToggle();
-    this.props.onText();
-    //this.handleLeave();
-    this.socket.emit("leave", "leaveing");
-  };
+//   //         // Setup ice handling
+//   //         this.peer2peer.onicecandidate = event => {
+//   //           if (event.candidate) {
+//   //             this.socket.emit("candidate", event.candidate);
+//   //           }
+//   //         };
 
-  //Listening signal
-  onListen = () => {
-    this.socket.on("offer", msg => this.handleOffer(msg));
-    this.socket.on("candidate", msg => this.handleCandidate(msg));
-    this.socket.on("answer", msg => this.handleAnswer(msg));
-    this.socket.on("leave", msg => this.handleLeave());
-    this.socket.on("busy", msg => this.handleBusy(msg));
-  };
+//   //         resolve();
+//   //       },
+//   //       err => {
+//   //         console.log("error");
+//   //         reject();
+//   //       }
+//   //     );
+//   //   });
+//   //   //const media=navigator.mediaDevices.getUserMedia ||
+//   // };
 
-  handleOffer = offer => {
-    console.log("offer");
-    if (this.state.offer) {
-      this.socket.emit("busy", "peer is busy");
-      return;
-    }
+//   onCall = () => {
+//     const { receiver, sender, audio, video } = this.props;
+//     this.onStart().then(() => {
+//       this.active.emit("call", {
+//         receiver,
+//         sender,
+//         audio,
+//         video,
+//         date: new Date().getTime()
+//       });
 
-    this.setState({ offer: true });
-    this.peer2peer.setRemoteDescription(new RTCSessionDescription(offer));
-    //create an answer to an offer
-    this.peer2peer
-      .createAnswer()
-      .then(answer => {
-        this.peer2peer.setLocalDescription(answer);
-        this.socket.emit("answer", answer);
-      })
-      .catch(error => {
-        alert("Error when creating an answer");
-      });
-  };
+//       this.unreachable = setTimeout(
+//         () => this.setState({ status: "unreachable" }),
+//         this.calling
+//       );
 
-  handleAnswer = answer => {
-    this.peer2peer.setRemoteDescription(new RTCSessionDescription(answer));
-  };
+//       this.active.on("callAnswer", msg => {
+//         if (msg.receiver === sender.userEmail) {
+//           clearTimeout(this.unreachable);
+//           if (msg.status === "accepted") {
+//             this.setState({ status: "accepted" });
+//             this.onCreateOffer();
+//             // this.video.call();
+//             // // this.audio.call();
+//           }
+//           if (msg.status === "rejected") this.setState({ status: "rejected" });
+//           if (msg.status === "busy") this.setState({ status: "busy" });
+//         }
+//       });
+//     });
+//   };
 
-  handleCandidate = candidate => {
-    this.peer2peer.addIceCandidate(new RTCIceCandidate(candidate));
-  };
+//   // onWait = () => {
+//   //   if (this.state.status !== "accepted") {
+//   //     this.onLeave();
+//   //   }
+//   // };
 
-  handleLeave = () => {
-    const { userName, userEmail, profilePicture } = this.props.sender;
-    this.setState({ offer: false });
-    this.localstream.getTracks().forEach(track => track.stop());
-    this.peer2peer.close();
-    this.peer2peer.onicecandidate = null;
-    this.peer2peer.onaddstream = null;
-    this.props.onCallEnd({ userName, userEmail, profilePicture });
-  };
+//   // onCreateOffer = () => {
+//   //   this.peer2peer
+//   //     .createOffer()
+//   //     .then(offer => {
+//   //       this.socket.emit("offer", offer);
+//   //       this.peer2peer.setLocalDescription(offer);
+//   //     })
+//   //     .catch(error => {
+//   //       throw error;
+//   //     });
+//   // };
 
-  handleBusy = msg => {
-    console.log(msg);
-  };
+//   // onListen = () => {
+//   //   this.socket.on("offer", msg => {
+//   //     console.log("offer");
+//   //     this.handleOffer(msg);
+//   //   });
+//   //   this.socket.on("candidate", msg => {
+//   //     console.log("candidate");
+//   //     this.handleCandidate(msg);
+//   //   });
+//   //   this.socket.on("answer", msg => {
+//   //     console.log("answer");
+//   //     this.handleAnswer(msg);
+//   //   });
+//   //   this.socket.on("leave", msg => {
+//   //     console.log("leave");
+//   //     this.handleLeave();
+//   //   });
+//   //   this.socket.on("busy", msg => this.handleBusy(msg));
+//   // };
 
-  getView = () => {
-    return (
-      <div className="modal-container">
-        <div className="modal-btn">
-          <button onClick={this.onCall} className="call-btn">
-            call
-          </button>
-          <button onClick={this.onLeave} className="hangup-btn">
-            hangup
-          </button>
-        </div>
-        <video
-          ref={this.localvdoref}
-          id="local"
-          autoPlay
-          className="local-video"
-        />
-        <video
-          ref={this.remotevdoref}
-          id="remote"
-          autoPlay
-          className="remote-video"
-        />
-      </div>
-    );
-  };
+//   // handleOffer = offer => {
+//   //   if (this.state.offer) {
+//   //     this.socket.emit("busy", "peer is busy");
+//   //     return;
+//   //   }
 
-  render() {
-    return (
-      <React.Fragment>{this.state.isOpen && this.getView()}</React.Fragment>
-    );
-  }
-}
+//   //   this.onStart().then(() => {
+//   //     this.setState({ status: "accepted" });
+//   //     this.setState({ offer: true });
+//   //     this.peer2peer.setRemoteDescription(new RTCSessionDescription(offer));
+//   //     //create an answer to an offer
+//   //     this.peer2peer
+//   //       .createAnswer()
+//   //       .then(answer => {
+//   //         this.peer2peer.setLocalDescription(answer);
+//   //         this.socket.emit("answer", answer);
+//   //       })
+//   //       .catch(error => {
+//   //         throw error;
+//   //       });
+//   //   });
+//   // };
 
-export default VideoAudioChat;
+//   // handleAnswer = answer => {
+//   //   this.peer2peer.setRemoteDescription(new RTCSessionDescription(answer));
+//   // };
+
+//   // handleCandidate = candidate => {
+//   //   this.getrtc()
+//   //     .then(rtc => rtc.addIceCandidate(new RTCIceCandidate(candidate)))
+//   //     .catch(err => console.log("handle can : ", err));
+//   // };
+
+//   // onLeave = () => {
+//   //   this.handleLeave();
+//   //   const { receiver, sender } = this.props;
+//   //   if (this.state.status !== "calling") {
+//   //     this.socket.emit("leave", "leaveing");
+//   //   } else this.active.emit("leave", { receiver, sender });
+//   // };
+
+//   // handleLeave = () => {
+//   //   const { userName, userEmail, profilePicture } = this.props.sender;
+//   //   this.setState({ offer: false, status: "callEnd" });
+//   //   this.peer2peer.close();
+//   //   this.localstream.getTracks().forEach(track => track.stop());
+//   //   clearInterval(this.timeElapsed);
+
+//   //   setTimeout(() => {
+//   //     this.props.onCallEnd({ userName, userEmail, profilePicture });
+//   //     this.props.onText();
+//   //   }, 3 * 1000);
+//   // };
+
+//   // handleBusy = msg => {
+//   //   console.log(msg);
+//   // };
+
+//   getView = () => {
+//     return (
+//       <div className="modal-container" id="modal">
+//         {this.props.video ? (
+//           <div>
+//             <video
+//               ref={this.localvdoref}
+//               id="local"
+//               autoPlay
+//               className="local-video"
+//               muted
+//             />
+//             <video
+//               ref={this.remotevdoref}
+//               id="remote"
+//               autoPlay
+//               className="remote-video"
+//             />
+//           </div>
+//         ) : (
+//           <div>
+//             <audio
+//               ref={this.localvdoref}
+//               id="local"
+//               autoPlay
+//               className="local-video"
+//               muted
+//             />
+//             <audio
+//               ref={this.remotevdoref}
+//               id="remote"
+//               autoPlay
+//               className="remote-video"
+//             />
+//             <i className="fa fa-microphone" aria-hidden="true" />
+//           </div>
+//         )}
+//         <div className="modal-btn">
+//           {this.state.status}
+
+//           <button onClick={this.onLeave} className="hangup-btn">
+//             <i className="fa fa-phone" />
+//           </button>
+//         </div>
+//         {this.state.status !== "accepted" ? (
+//           <div className="calling-status">
+//             <i className="fa fa-phone" id={this.state.status} />
+//           </div>
+//         ) : (
+//           <div>{timeConverter(this.state.duration)}</div>
+//         )}
+//       </div>
+//     );
+//   };
+
+//   render() {
+//     return <React.Fragment>{this.getView()}</React.Fragment>;
+//   }
+// }
+
+// export default VideoAudioChat;

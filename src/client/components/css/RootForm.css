@@ -39,5 +39,5 @@
 
 .msg-compose .btn:hover {
   color: var(--app-screen-deeper);
-  box-shadow: 0.001rem 0.01rem 0.02rem 0.02rem var(--shadow);
+  box-shadow: -0.02rem -0.015rem 0.03rem 0.06rem var(--shadow);
 }

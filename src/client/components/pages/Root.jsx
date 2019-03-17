@@ -1,11 +1,11 @@
 import React, { Component } from "react";
-import axios from "axios";
-import { onGetRoomSocket, onGetLoginSocket } from "../socket/Socket";
 import Show from "./Show";
 import { getDateTime } from "../util/Date";
 import { notifications } from "../util/Notifications";
 import authenticate from "../middleware/Authenticate";
 import api from "../../api/Api";
+import listenerSocket from "../socket/ListenerSocket";
+import p2pSocket from "../socket/P2Psocket";
 
 class Root extends Component {
   constructor(props) {
@@ -28,14 +28,13 @@ class Root extends Component {
         userProfilePicture: ""
       },
       call_acceptance: {
-        accept: false,
+        status: "missed",
         audio: false,
         video: false
       }
     };
 
     this.socket = null;
-    this.active = null;
     this.timer = 7 * 1000;
     this.listRef = React.createRef();
   }
@@ -49,32 +48,37 @@ class Root extends Component {
     clearInterval(this.timer);
   };
 
-  componentDidUpdate = (prevProps, prevState) => {
+  componentDidUpdate = async (prevProps, prevState) => {
     let prevFriendList = prevState.friendlist;
     let currFriendList = this.state.friendlist;
 
-    const message = notifications(
+    notifications(
       prevFriendList,
       currFriendList,
       this.state.receiver.receiverEmail,
       this.state.user.userEmail
-    );
-    if (!!message) {
-      this.setState({
-        notifications: { message, call: this.state.notifications.call }
-      });
-      clearTimeout(this.notfy);
-      this.notfy = setTimeout(
-        () => this.setState({ notifications: null }),
-        8 * 1000
-      );
-    }
+    ).then(message => {
+      if (!!message) {
+        this.setState({
+          notifications: { message, call: this.state.notifications.call }
+        });
+        clearTimeout(this.notfy);
+        this.notfy = setTimeout(
+          () =>
+            this.setState({
+              notifications: {
+                message: null,
+                call: this.state.notifications.call
+              }
+            }),
+          10 * 1000
+        );
+      }
+    });
   };
 
   //authentication
   onActive = user => {
-    console.log("active");
-
     this.setState({
       user: {
         userName: user.userName,
@@ -82,21 +86,23 @@ class Root extends Component {
         userProfilePicture: user.profilePicture
       }
     });
-    this.active = onGetLoginSocket(user.userEmail);
-    this.onListenActive();
+
+    listenerSocket.initSocket(user.userEmail);
+    listenerSocket.listening(
+      user.userEmail,
+      this.Caller.onGettingCall,
+      this.Caller.onCallEnd
+    );
     sessionStorage.userEmail = user.userEmail;
   };
 
   onlogOut = () => {
-    if (this.active) this.active.disconnect();
+    listenerSocket.closeSocket();
   };
 
   //api requests
-  onGetMessage = (receiver, sender) =>
-    api.getMessage({ receiver, sender }).then(res => {
-      this.setState({ messages: res.data.messages.reverse() });
-      return res;
-    });
+
+  onSetState = newState => this.setState(newState);
 
   onGetFriends = () =>
     api.getFriends({ userEmail: this.state.user.userEmail }).then(res => {
@@ -104,21 +110,34 @@ class Root extends Component {
       return res;
     });
 
-  onAddFriend = userEmail =>
-    api.addFriend({
-      friendEmail: userEmail,
-      myEmail: this.state.user.userEmail,
-      date: getDateTime()
+  onGetMessage = (receiver, sender) =>
+    api.getMessage({ receiver, sender }).then(res => {
+      this.setState({ messages: res.data.messages.reverse() });
+      return res;
     });
-  onUnFriend = secondEmail =>
-    api.unFriend({ secondEmail, firstEmail: this.state.user.userEmail });
+
+  onMessageNotification = data => {
+    this.setState({
+      notifications: { message: null, call: this.state.notifications.call }
+    });
+    this.onSelectFriend(data);
+  };
 
   //select friend
-  onSelectFriend = friendData => {
-    console.log("notifications", this.state.notifications);
-    this.onCloseSocket();
+  onReset = () => {
     this.setState({
-      notifications: { message: null, call: this.state.notifications.call },
+      messages: [],
+      receiver: {
+        receiverEmail: "",
+        receiverName: "",
+        receiverProfilePicture: ""
+      }
+    });
+  };
+
+  onSelectFriend = friendData => {
+    p2pSocket.closeSocket();
+    this.setState({
       receiver: {
         receiverName: friendData.userName,
         receiverEmail: friendData.userEmail,
@@ -128,18 +147,58 @@ class Root extends Component {
 
     const receiver = friendData.userEmail;
     const sender = this.state.user.userEmail;
-    this.initSocket(receiver, sender);
-    //get last 4 message
+    p2pSocket.closeSocket();
+    p2pSocket.initSocket(receiver, sender);
+    p2pSocket.listening(this.addMessage, this.lastMessageSent);
+
+    // this.initSocket(receiver, sender);
+    // //get last 4 message
     return this.onGetMessage(receiver, sender);
   };
 
   //Calling
   Caller = {
-    onGettingCall: call =>
+    onGettingCall: newcall => {
+      const { call } = this.state.notifications;
+      const { status } = this.state.call_acceptance;
+      console.log("got call");
+
+      if (!!call || status === "accepted") {
+        listenerSocket.emiter("callAnswer", {
+          status: "busy",
+          receiver: newcall.sender
+        });
+        return;
+      }
+
       this.setState({
-        notifications: { message: this.state.notifications.message, call }
-      }),
+        notifications: {
+          message: this.state.notifications.message,
+          call: newcall
+        }
+      });
+
+      this.calling = setTimeout(
+        () =>
+          this.setState({
+            notifications: {
+              message: this.state.notifications.message,
+              call: null
+            }
+          }),
+        60 * 1000
+      );
+    },
+
     onAnswerCall: (decision, msg) => {
+      clearTimeout(this.calling);
+      this.setState({
+        notifications: {
+          message: this.state.notifications.message,
+          call: null
+        }
+      });
+
       switch (decision) {
         case "accept":
           this.Caller.onCallAccept(msg);
@@ -150,11 +209,8 @@ class Root extends Component {
       }
     },
     onCallAccept: msg => {
-      this.setState({
-        notifications: { message: this.state.notifications.message, call: null }
-      });
       this.Caller.onToggleAccept({
-        accept: true,
+        status: "accepted",
         audio: msg.audio,
         video: msg.video
       });
@@ -167,7 +223,7 @@ class Root extends Component {
       });
       setTimeout(
         () =>
-          this.active.emit("callAnswer", {
+          listenerSocket.emiter("callAnswer", {
             status: "accepted",
             receiver: msg.sender.userEmail
           }),
@@ -176,10 +232,14 @@ class Root extends Component {
     },
 
     onCallReject: msg => {
-      this.setState({ call: null });
+      this.Caller.onToggleAccept({
+        status: "rejected",
+        audio: msg.audio,
+        video: msg.video
+      });
       setTimeout(
         () =>
-          this.active.emit("callAnswer", {
+          listenerSocket.emiter("callAnswer", {
             status: "rejected",
             receiver: msg.sender
           }),
@@ -187,7 +247,30 @@ class Root extends Component {
       );
     },
     onCallEnd: data => {
-      this.Caller.onToggleAccept({ accept: false, audio: false, video: false });
+      console.log(data);
+      // if (data.userEmail === this.state.user.userEmail) {
+      //   this.onSend({
+      //     fileName: "",
+      //     mimeType: "",
+      //     file: null,
+      //     size: "",
+      //     messageType: false,
+      //     message: this.state.call_acceptance.status + " Call",
+      //     date: getDateTime(),
+      //     status: "seen"
+      //   });
+      // }
+      this.Caller.onToggleAccept({
+        status: "missed",
+        audio: false,
+        video: false
+      });
+      this.setState({
+        notifications: {
+          message: this.state.notifications.message,
+          call: null
+        }
+      });
     },
     onToggleAccept: call_acceptance => this.setState({ call_acceptance })
   };
@@ -226,40 +309,8 @@ class Root extends Component {
     const messageObject = data;
     messageObject.senderEmail = this.state.user.userEmail;
     messageObject.receiverEmail = this.state.receiver.receiverEmail;
-    this.socket.emit("requestMessage", messageObject);
+    p2pSocket.emiter("requestMessage", messageObject);
     this.addMessage(messageObject, "user");
-  };
-
-  //Socket
-  initSocket = (receiver, sender) => {
-    this.socket = onGetRoomSocket(receiver, sender);
-    this.onListenRoom();
-  };
-
-  onListenRoom = () => {
-    this.socket.on("responseMessage", msg => {
-      this.addMessage(msg, "socket");
-      this.socket.emit("status", "seen");
-    });
-    //this.socket.on("peer_in_room", peer => this.onGetMessage(receiver, sender));
-    this.socket.on("status", status => this.lastMessageSent(status));
-  };
-
-  onListenActive = () => {
-    const { userEmail } = this.state.user;
-    this.active.on("call", msg => {
-      if (msg.receiver === userEmail) {
-        console.log("calling");
-        this.Caller.onGettingCall(msg);
-      }
-    });
-  };
-
-  onGetSocket = () => this.socket;
-  onActiveSocket = () => this.active;
-  onCloseSocket = () => {
-    if (this.socket) this.socket.close();
-    this.setState({ messages: [], receiver: { receiverEmail: "" } });
   };
 
   //render
@@ -282,14 +333,10 @@ class Root extends Component {
           onRefresh={data => authenticate.onRefresh(data, this.onActive)}
           onSend={this.onSend}
           onSelectFriend={this.onSelectFriend}
+          onReset={this.onReset}
           onGetFriends={this.onGetFriends}
-          onAddFriend={this.onAddFriend}
-          onGetSocket={this.onGetSocket}
-          onActiveSocket={this.onActiveSocket}
           onlogOut={this.onlogOut}
-          onCloseSocket={this.onCloseSocket}
-          onUnFriend={this.onUnFriend}
-          accept={call_acceptance}
+          call_acceptance={call_acceptance}
           user={user}
           receiver={receiver}
           messages={messages}
@@ -298,6 +345,7 @@ class Root extends Component {
           call={call}
           onAnswerCall={this.Caller.onAnswerCall}
           onCallEnd={this.Caller.onCallEnd}
+          onMessageNotification={this.onMessageNotification}
         />
       </div>
     );

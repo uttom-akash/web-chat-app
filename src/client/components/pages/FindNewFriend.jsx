@@ -3,7 +3,6 @@ import SearchBar from "../util/SearchBar";
 import axios from "axios";
 import api from "../../api/Api";
 import { getDateTime } from "../util/Date";
-import { connect } from "react-redux";
 import "../css/FindNewFriend.css";
 class NewFriend extends Component {
   state = {
@@ -116,8 +115,5 @@ class NewFriend extends Component {
     );
   }
 }
-const mapStatesToProps = state => ({
-  user: state.user
-});
 
-export default connect(mapStatesToProps)(NewFriend);
+export default NewFriend;

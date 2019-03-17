@@ -32,7 +32,6 @@ class FriendList extends Component {
 
   getViews = () => {
     const { friendlist } = this.props;
-    console.log(friendlist);
 
     const view = friendlist.map((friend, index) => {
       const options = friend.profile.active ? "online" : "offline";

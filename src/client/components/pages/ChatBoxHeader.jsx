@@ -11,8 +11,7 @@ class ChatBoxHeader extends Component {
       receiverName,
       forward,
       backward,
-      onVideo,
-      onAudio,
+      onCall,
       disabled
     } = this.props;
 
@@ -29,10 +28,16 @@ class ChatBoxHeader extends Component {
         <div className="btn" onClick={forward}>
           <i className="fa fa-download" />
         </div>
-        <div className="btn" onClick={onAudio}>
+        <div
+          className="btn"
+          onClick={() => onCall({ audio: true, video: false })}
+        >
           <i className="fa fa-phone" />
         </div>
-        <div className="btn" onClick={onVideo}>
+        <div
+          className="btn"
+          onClick={() => onCall({ audio: true, video: true })}
+        >
           <i className="fa fa-video-camera" />
         </div>
       </section>

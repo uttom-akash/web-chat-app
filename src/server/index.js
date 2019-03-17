@@ -1,9 +1,16 @@
 var express = require("express");
-var http = require("http");
+var https = require("https");
 var io = require("socket.io");
 var router = require("./ApiRequest");
 const app = express();
-const server = http.createServer(app);
+const fs = require("fs");
+const path = require("path");
+const httpsOptions = {
+  cert: fs.readFileSync(path.join(__dirname, "server.cert")),
+  key: fs.readFileSync(path.join(__dirname, "server.key"))
+};
+
+const server = https.createServer(httpsOptions, app);
 const ioc = io(server);
 var Socket = require("./Socket");
 
@@ -13,8 +20,8 @@ app.use(express.static("uploads"));
 //ioc.on("connect", connectionHandle);
 new Socket(ioc);
 
-// setInterval(() => {
-//   ioc.of("/").clients((err, cl) => console.log(cl));
-// }, 5000);
+app.get("/", (req, res) => {
+  res.send("akash");
+});
 
-server.listen(8089, () => console.log("localhost:8089"));
+server.listen(8080, () => console.log("localhost:8080"));

@@ -26,8 +26,6 @@ class Upload extends Component {
 
   render() {
     const { loaded, total } = this.state;
-    console.log(loaded);
-
     return (
       <div>
         {total !== 0 && (

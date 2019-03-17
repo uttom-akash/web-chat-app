@@ -1,14 +1,16 @@
 .menu-bar {
+  height: 2rem;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   background-color: var(--app-screen-header);
+  box-shadow: -0.1rem 0.13rem 0.2rem 0.05rem var(--shadow);
 }
 
 .menu-bar .btn {
   margin: 0;
-  padding: 2px 12px 1px 12px;
-  font-size: 22px;
+  padding: 2px 12px 0px 12px;
+  font-size: 1.1rem;
   border-radius: 0;
   color: var(--icon-color);
   border-bottom: 3px solid var(--app-screen-header);
@@ -35,5 +37,5 @@
 .menu-bar .btn:hover {
   color: var(--icon-color);
   border-bottom: 3px solid var(--icon-color);
-  box-shadow: 0rem 0rem 0.03rem 0.03rem var(--shadow);
+  box-shadow: -0.04rem 0.1rem 0.09rem 0.07rem var(--shadow);
 }

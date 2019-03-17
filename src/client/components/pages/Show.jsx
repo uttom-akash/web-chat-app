@@ -10,7 +10,7 @@ import theme from "../util/theme";
 
 class Show extends Component {
   state = {
-    currentDisplay: "Cover",
+    currentDisplay: "Chat-box",
     loading: false
   };
 
@@ -40,19 +40,16 @@ class Show extends Component {
     });
 
   onSelectFriend = friendData => {
-    this.ChangeDisplayForward();
     this.props.onSelectFriend(friendData);
+    this.ChangeDisplayForward();
   };
+  onMessageNotification = data => {
+    this.props.onMessageNotification(data);
+    this.ChangeDisplayForward();
+  };
+
   onFriendSearch = () => {
     this.setState({ currentDisplay: "Add-friend" });
-  };
-
-  onAddFriend = userEmail => {
-    return this.props.onAddFriend(userEmail);
-  };
-
-  onUnFriend = userEmail => {
-    return this.props.onUnFriend(userEmail);
   };
 
   onlogOut = () => {
@@ -72,7 +69,10 @@ class Show extends Component {
   };
 
   componentDidUpdate = prevProps => {
-    if (!prevProps.accept.accept && this.props.accept.accept)
+    if (
+      prevProps.call_acceptance.status !== "accepted" &&
+      this.props.call_acceptance.status === "accepted"
+    )
       this.setState({ currentDisplay: "Chat-box" });
   };
 
@@ -98,13 +98,11 @@ class Show extends Component {
     }
   };
 
-  onCloseSocket = () => this.props.onCloseSocket();
-
   ChangeDisplayBackward = () => {
     const { currentDisplay } = this.state;
     switch (currentDisplay) {
       case "Chat-box":
-        this.onCloseSocket();
+        this.props.onReset();
         this.setState({ currentDisplay: "Friend-list" });
         return;
       case "Add-friend":
@@ -124,16 +122,13 @@ class Show extends Component {
   showDisplay = () => {
     const { currentDisplay } = this.state;
     const {
-      accept,
+      call_acceptance,
       user,
       receiver,
       messages,
       friendlist,
       onSend,
-      onGetFriends,
-      onGetSocket,
-      onActiveSocket,
-      onToggleAccept
+      onGetFriends
     } = this.props;
 
     switch (currentDisplay) {
@@ -154,18 +149,12 @@ class Show extends Component {
         );
       case "Add-friend":
         return (
-          <FindNewFriend
-            user={user}
-            backward={this.ChangeDisplayBackward}
-            onAddFriend={this.onAddFriend}
-            onUnFriend={this.onUnFriend}
-          />
+          <FindNewFriend user={user} backward={this.ChangeDisplayBackward} />
         );
       case "Chat-box":
         return (
           <ChatBox
-            accept={accept}
-            onToggleAccept={onToggleAccept}
+            call_acceptance={call_acceptance}
             onCallEnd={this.onCallEnd}
             user={user}
             receiver={receiver}
@@ -173,8 +162,6 @@ class Show extends Component {
             onSend={onSend}
             forward={this.ChangeDisplayForward}
             backward={this.ChangeDisplayBackward}
-            onGetSocket={onGetSocket}
-            onActiveSocket={onActiveSocket}
           />
         );
       case "Download":
@@ -198,36 +185,33 @@ class Show extends Component {
           {!!notifications.message && (
             <div
               className="notify"
-              onClick={() => this.onSelectFriend(notifications.message)}
+              onClick={() => this.onMessageNotification(notifications.message)}
             >
-              <div className="notify-userName">
-                <label>{notifications.message.userName}</label>
+              <div className="notify-userImage">
+                <img src={notifications.message.profilePicture} alt="caller" />
               </div>
               <p className="notify-message">{notifications.message.message}</p>
             </div>
           )}
           {!!notifications.call && (
             <div className="notify">
-              <img
-                style={{ width: "10px", height: "10px" }}
-                src={notifications.call.sender.userProfilePicture}
-                alt="caller"
-              />
-              <div className="notify-userName">
-                <label>{notifications.call.sender.userName}</label>
+              <div className="notify-userImage">
+                <img
+                  src={notifications.call.sender.userProfilePicture}
+                  alt="caller"
+                />
               </div>
-              <div
+              <i
                 onClick={() => this.onAnswerCall("accept", notifications.call)}
-                style={{ color: "white" }}
-              >
-                accept
-              </div>
-              <div
-                style={{ color: "white" }}
+                className="fas fa-phone"
+                id="accept"
+              />
+
+              <i
                 onClick={() => this.onAnswerCall("reject", notifications.call)}
-              >
-                reject
-              </div>
+                className="fas fa-phone"
+                id="reject"
+              />
             </div>
           )}
           {this.state.loading ? (

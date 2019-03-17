@@ -24,7 +24,7 @@ class Socket {
       //call inintiating
       socket.on("call", msg => socket.broadcast.emit("call", msg));
       socket.on("callAnswer", msg => socket.broadcast.emit("callAnswer", msg));
-
+      socket.on("leave", msg => socket.broadcast.emit("leave", msg));
       socket.on("disconnect", () => {
         //update deactive users
         dbUpdateUsers(userEmail, 0);
