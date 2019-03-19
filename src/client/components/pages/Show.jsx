@@ -10,7 +10,7 @@ import theme from "../util/theme";
 
 class Show extends Component {
   state = {
-    currentDisplay: "Chat-box",
+    currentDisplay: "Cover",
     loading: false
   };
 

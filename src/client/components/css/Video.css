@@ -1,0 +1,90 @@
+.video-call {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stream .remote-video {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  position: relative;
+  border-radius: 3px;
+}
+
+.stream .local-video {
+  padding: 0;
+  margin: 0;
+  width: 25%;
+  position: absolute;
+  z-index: 2;
+  /* border: 1px solid var(--app-screen-deeper); */
+  border-radius: 3px;
+}
+
+.video-call .status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.status code {
+  font-size: 1.2rem;
+}
+
+.status .phone {
+  height: 5.3rem;
+}
+
+.status #calling,
+#initiating {
+  color: var(--active);
+  font-size: 5rem;
+  animation: calling 6s ease-in-out infinite forwards;
+  text-shadow: 0.1rem 0.1rem var(--shadow);
+}
+
+@keyframes calling {
+  50% {
+    color: var(--in-active);
+    font-size: 4.4rem;
+  }
+  100% {
+    color: var(--active);
+    font-size: 5rem;
+  }
+}
+
+.status #received {
+  color: var(--active);
+  font-size: 5rem;
+}
+
+.status #unreachable,
+#rejected,
+#busy,
+#end {
+  color: var(--error);
+  font-size: 5rem;
+}
+
+.video-call .cut {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: auto;
+  width: 2rem;
+  height: 2rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  background-color: var(--error);
+  border-radius: 50%;
+  box-shadow: 0.01rem 0.01rem 0.02rem 0.05rem var(--app-screen-header);
+}
+
+.video-call .cut:hover {
+  background-color: var(--app-screen);
+}

@@ -3,13 +3,15 @@ export default class WebrtcApi {
     socket,
     mediaConstraints,
     remoteStreamCallback,
-    localStreamCallback
+    localStreamCallback,
+    cleenupCallback
   ) {
     //necessary
     this.socket = socket;
     this.mediaConstraints = mediaConstraints;
     this.remoteStreamCallback = remoteStreamCallback;
     this.localStreamCallback = localStreamCallback;
+    this.cleenupCallback = cleenupCallback;
 
     //initialize
     this.rtcPeerConnection = null;
@@ -118,7 +120,7 @@ export default class WebrtcApi {
         break;
     }
 
-    this.closeVideoCall();
+    this.closeCall();
   };
   //endCall
 
@@ -168,9 +170,6 @@ export default class WebrtcApi {
   };
 
   closeCall = () => {
-    // var remoteVideo = document.getElementById("received_video");
-    // var localVideo = document.getElementById("local_video");
-
     if (this.rtcPeerConnection) {
       this.rtcPeerConnection.ontrack = null;
       this.rtcPeerConnection.onicecandidate = null;
@@ -183,7 +182,7 @@ export default class WebrtcApi {
       this.rtcPeerConnection.close();
       this.rtcPeerConnection = null;
     }
-
+    this.cleenupCallback();
     // remoteVideo.removeAttribute("src");
     // remoteVideo.removeAttribute("srcObject");
     // localVideo.removeAttribute("src");

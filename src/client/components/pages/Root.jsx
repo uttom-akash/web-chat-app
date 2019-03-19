@@ -6,7 +6,7 @@ import authenticate from "../middleware/Authenticate";
 import api from "../../api/Api";
 import listenerSocket from "../socket/ListenerSocket";
 import p2pSocket from "../socket/P2Psocket";
-
+import gettingCall from "../../../assets/gettingCall.wav";
 class Root extends Component {
   constructor(props) {
     super(props);
@@ -347,6 +347,9 @@ class Root extends Component {
           onCallEnd={this.Caller.onCallEnd}
           onMessageNotification={this.onMessageNotification}
         />
+        {!!this.state.notifications.call && (
+          <audio src={gettingCall} autoPlay loop />
+        )}
       </div>
     );
   }
