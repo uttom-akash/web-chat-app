@@ -2,6 +2,7 @@ var express = require("express");
 var https = require("https");
 var io = require("socket.io");
 var router = require("./ApiRequest");
+const pythonshell = require("python-shell").PythonShell;
 const app = express();
 const fs = require("fs");
 const path = require("path");
@@ -21,7 +22,9 @@ app.use(express.static("uploads"));
 new Socket(ioc);
 
 app.get("/", (req, res) => {
-  res.send("akash");
+  pythonshell.run(path.join(__dirname, "akash.py"), null, (err, data) => {
+    res.send(data[0]);
+  });
 });
 
 server.listen(8080, () => console.log("localhost:8080"));

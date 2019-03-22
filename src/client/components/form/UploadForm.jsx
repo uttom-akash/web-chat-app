@@ -29,7 +29,7 @@ class Upload extends Component {
     return (
       <div>
         {total !== 0 && (
-          <label style={{ color: "#00bfff" }}>
+          <label style={{ color: "#dbdfe0" }}>
             {Convert(loaded)} / {Convert(total)}
           </label>
         )}

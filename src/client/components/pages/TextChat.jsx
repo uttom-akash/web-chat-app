@@ -13,7 +13,7 @@ import SingleMessage from "./Message";
 class TextChat extends Component {
   constructor(props) {
     super(props);
-    this.overscanRowCount = 4;
+    this.overscanRowCount = 8;
     this.cache = new CellMeasurerCache({
       fixedWidth: true,
       defaultHeight: 100
@@ -22,7 +22,7 @@ class TextChat extends Component {
 
   componentDidUpdate = prevProps => {
     if (prevProps !== this.props) {
-      this.overscanRowCount = 7 ^ this.overscanRowCount;
+      this.overscanRowCount = 15 ^ this.overscanRowCount;
     }
   };
   rowRenderer = ({ index, key, parent, style }) => {

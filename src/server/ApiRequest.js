@@ -44,7 +44,7 @@ router.post("/upload", uploads.single("file"), (req, res) => {
 
   dbGetRoomId(roomName(receiver, sender)).then(roomId => {
     let sql = `INSERT INTO uploads(roomId,fileName,mimeType,path,date) VALUES(?,?,?,?,?)`;
-    const path = `http://192.168.0.110:8089/api/download?q=${filedir(
+    const path = `https://192.168.0.110:8080/api/download?q=${filedir(
       mimetype
     )}/${originalname}`;
 
@@ -120,26 +120,7 @@ router.get("/vdo", function(req, res) {
 
 router.post("/save-message", (req, res) => {
   dbSaveMessage(req.body.data).then(dbresult => res.json(dbresult));
-  //.catch(dberror => res.json(dberror));
 });
-
-//Getting messages
-
-// const getRes = resMes => {
-//   let resultMessages = resMes.map(async item => {
-//     if (item.messageType) {
-//       fs.readFile(`${filedir(item.type)}/${item.fileName}`, (err, data) => {
-//         item.file = data;
-//       });
-//     } else {
-//       item.file = "";
-//     }
-
-//     return item;
-//   });
-//   console.log(resultMessages);
-//   return resultMessages;
-// };
 
 router.post("/get-message", (req, res) => {
   const { receiver, sender } = req.body.data;

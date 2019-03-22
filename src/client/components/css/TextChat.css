@@ -24,12 +24,12 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--hover);
+  background: var(--app-screen);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: var(--hover);
+  background: var(--app-screen-shadow);
 }
 
 /* Handle on hover */

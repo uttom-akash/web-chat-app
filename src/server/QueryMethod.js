@@ -1,11 +1,8 @@
 var fs = require("fs");
 var pool = require("./MysqlPool");
 var roomName = require("./EmailCompareAndRoomName");
-// var roomName = require("./EmailCompareAndRoomName");
-// var multer = require("multer");
-// var path = require("path");
 var filedir = require("./FileDirect");
-// var mysql = require("mysql");
+var type = require("./FileType");
 
 const dbUpdateMessageStatus = (
   senderEmail,
@@ -20,7 +17,7 @@ const dbUpdateMessageStatus = (
 };
 
 const dbSaveMessage = data => {
-  const {
+  let {
     file,
     message,
     receiverEmail,
@@ -37,6 +34,15 @@ const dbSaveMessage = data => {
   return dbGetRoomId(room).then(roomId => {
     let sql = `INSERT INTO messages(roomId,message,senderEmail,receiverEmail,fileName,mimeType,messageType,date,status) 
     VALUES(?,?,?,?,?,?,?,?,?)`;
+
+    if (messageType && type(mimeType) === "files") {
+      message = `https://192.168.0.110:8080/api/download?q=${filedir(
+        mimeType
+      )}/${fileName}`;
+    }
+
+    console.log(message);
+
     return pool
       .query(sql, [
         roomId,

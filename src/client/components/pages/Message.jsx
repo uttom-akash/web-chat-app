@@ -28,8 +28,8 @@ export default props => {
           <img src={owner} alt="avatar" className="proAvatar" />
           <div className="message-box">
             <img src={msg.file} alt="message" className="msg-img" />
-            {me && <p className="status">{msg.status}</p>}
           </div>
+          {me && <p className="status">{msg.status}</p>}
         </article>
       );
     case "":
@@ -47,7 +47,7 @@ export default props => {
         <article className={side} id="article">
           <img src={owner} alt="avatar" className="proAvatar" />
           <div className="message-box">
-            <a href={msg.file} className="url">
+            <a href={msg.message} className="url">
               {msg.fileName}
             </a>
             {me && <p className="status">{msg.status}</p>}

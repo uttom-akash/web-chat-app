@@ -36,6 +36,7 @@
 
 #article .message-box .msg-img {
   margin: 0.5rem;
+  height: 90%;
   width: 40%;
   border-radius: 10px;
 }
