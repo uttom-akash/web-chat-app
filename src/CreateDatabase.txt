@@ -1,0 +1,52 @@
+CREATE TABLE users(
+   userName VARCHAR(50),
+   userEmail VARCHAR(100) UNIQUE,
+   passwordHash VARCHAR(355),
+   active BOOLEAN,
+   date DATE,
+   PRIMARY KEY (userEmail)
+);
+
+CREATE TABLE rooms(
+     id INT AUTO_INCREMENT,
+     room VARCHAR(200),
+     PRIMARY KEY(id) 
+);
+
+CREATE TABLE friends(
+   firstEmail VARCHAR(100),
+   secondEmail VARCHAR(100),
+   roomId INT,
+   date DATETIME,
+   FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE CASCADE,
+   FOREIGN KEY(firstEmail) REFERENCES users(userEmail) ON DELETE CASCADE,
+   FOREIGN KEY(secondEmail) REFERENCES users(userEmail) ON DELETE CASCADE
+);
+
+CREATE TABLE messages(
+    id INT AUTO_INCREMENT,
+    roomId INT,
+    message VARCHAR(255),
+    senderEmail VARCHAR (100),
+    receiverEmail VARCHAR (100),
+    fileName VARCHAR(255),
+    mimeType VARCHAR(50),
+    messageType BOOLEAN,
+    date DATETIME,
+    status VARCHAR(30),
+    PRIMARY KEY(id),
+    FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE SET NULL,
+    FOREIGN KEY(senderEmail) REFERENCES users(userEmail) ON DELETE SET NULL,
+    FOREIGN KEY(receiverEmail) REFERENCES users(userEmail) ON DELETE SET NULL
+);
+
+CREATE TABLE uploads(
+    id INT AUTO_INCREMENT,
+    roomId INT,
+    fileName VARCHAR(255),
+    mimeType VARCHAR(255),
+    path VARCHAR(255),
+    date DATETIME,
+    PRIMARY KEY(id),
+    FOREIGN KEY(roomId) REFERENCES rooms(id) ON DELETE SET NULL
+);

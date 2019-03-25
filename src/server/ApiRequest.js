@@ -5,6 +5,8 @@ var multer = require("multer");
 var fs = require("fs");
 var path = require("path");
 var filedir = require("./FileDirect");
+var getSha256 = require("./Hashing");
+
 var {
   dbSaveMessage,
   dbMakeRoom,
@@ -15,15 +17,13 @@ var {
   getProfilePicture,
   dbUpdateUsers
 } = require("./QueryMethod");
-// var bodyParser=require('body-parser');
 
-// var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
+  destination: function (req, file, cb) {
     cb(null, filedir(file.mimetype));
   },
-  filename: function(req, file, cb) {
+  filename: function (req, file, cb) {
     cb(null, file.originalname);
   }
 });
@@ -73,7 +73,7 @@ router.get("/download", (req, res) => {
   res.download(dirName);
 });
 
-router.get("/vdo", function(req, res) {
+router.get("/vdo", function (req, res) {
   let file = path.join(__dirname, "uploads/images", `${req.query.q}`);
 
   fs.stat(file, (err, stats) => {
@@ -152,7 +152,7 @@ router.post("/register", (req, res) => {
 
   const sql = `INSERT INTO users(userName, userEmail, passwordHash,active,date) VALUES(?,?,?,?,?)`;
   pool
-    .query(sql, [userName, userEmail, password, true, "2019-2-11"])
+    .query(sql, [userName, userEmail, getSha256(password), true, "2019-2-11"])
     .then(dbresult => {
       fs.createWriteStream(
         `./src/server/uploads/profile/${userEmail}.jpeg`
@@ -173,8 +173,10 @@ router.post("/login", (req, res) => {
   let sql = `SELECT userName,active,date FROM users WHERE userEmail=? AND passwordHash=?`;
 
   pool
-    .query(sql, [userEmail, password])
+    .query(sql, [userEmail, getSha256(password)])
     .then(dbresult => {
+      console.log("log :-> ", dbresult);
+
       if (dbresult.length) {
         const { userName, active, date } = dbresult[0];
         res.json({

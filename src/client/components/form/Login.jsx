@@ -24,10 +24,8 @@ class Login extends Component {
     if (Object.keys(error).length === 0) {
       this.setState({ loading: true });
       this.props.onLogin({ userEmail, password }).catch(err => {
-        console.log(err);
-        // error.global = err.response.data.error;
-        // this.setState({ error });
-        this.setState({ loading: false });
+        error.global = err.response.data.error;
+        this.setState({ loading: false, error });
       });
     }
   };
@@ -78,8 +76,8 @@ class Login extends Component {
         {this.state.loading ? (
           <Spinner type="grow" className="spinner" />
         ) : (
-          this.getView()
-        )}
+            this.getView()
+          )}
       </React.Fragment>
     );
   }
